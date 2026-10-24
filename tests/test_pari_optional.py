@@ -10,6 +10,43 @@ import subprocess
 import pytest
 from padic_tools import AtomicMeasure, BallVladimirov, EisensteinQuadraticField, Gaussian, GaussianLocalPlace, PadicTestFunction, Qp, RationalAmiceMeasure, UnramifiedQuadraticField, exp, finite_fourier, log, taylor, zeta_p
 from padic_tools import Matrix
+from padic_tools import log1p, power
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p,sign", [(2, -1), (2, 1), (3, -1), (3, 1)])
+def test_gaussian_analytic_functions_against_pari_scalar_identities(p, sign):
+    # Do not call exp/log on a GP POLMOD: those are not a native ramified
+    # analytic oracle. Use Qp exp/sin/cos, log(norm), and a separately fixed
+    # rational arctangent polynomial. The omitted atan terms have v_p>300.
+    script = (
+        f"p={p};a=p^2+O(p^40);b=2*p^2+O(p^40);d=p+1;\n"
+        "emit(a,b)={print(lift(a));print(lift(b))};\n"
+        "emit(exp(a)*cos(b),exp(a)*sin(b));\n"
+        "A=1+a;B=b;u=log(A^2+B^2)/2;"
+        "v=sum(k=0,79,(-1)^k*(B/A)^(2*k+1)/(2*k+1));\n"
+        "emit(u,v);emit(exp(u/d)*cos(v/d),exp(u/d)*sin(v/d));\n"
+        "emit(exp(a)*cos(b+p^4),exp(a)*sin(b+p^4));\n"
+        "B=b+p^4;u=log(A^2+B^2)/2;"
+        "v=sum(k=0,79,(-1)^k*(B/A)^(2*k+1)/(2*k+1));emit(u,v);quit\n"
+    )
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 10
+    pairs = [(a-sign*b, sign*b) if p == 2 else (a, sign*b)
+             for a, b in zip(oracle[::2], oracle[1::2])]
+    place = GaussianLocalPlace(Qp(p, 3), root_sign=sign)
+    x = place(Gaussian(p*p, 2*p*p), absprec=21)
+    h = place(Gaussian(0, p**4), absprec=23)
+    values = [exp(x), log1p(x), power(1+x, Fraction(1, p+1)),
+              taylor(exp, x, order=30)(x+h),
+              taylor(log, 1+x, order=30)(1+x+h)]
+    assert log(1+x).contains(pairs[1])
+    for value, pair in zip(values, pairs):
+        assert value.precision == 21
+        assert value.contains(pair)
 
 
 @pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")

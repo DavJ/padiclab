@@ -234,6 +234,60 @@ polynom a funguje i nad lichými prvočísly. Odvození přesnosti, příklady
 se zápornou valuací a převod přesného gaussovského zdroje najdeš v
 :doc:`kapitole o rozvětvených polích <ramified>`.
 
+Analytické funkce v kvadratických polích
+-----------------------------------------
+
+``exp``, ``log1p``, ``log``, ``sin``, ``cos``, ``power`` a lokální
+``taylor`` nyní pracují i v obou ověřených kvadratických polích, včetně
+Q2(i). Přesnost i valuace používají uniformizátor cílového pole: valuace pi
+je jedna a valuace p je index rozvětvení e. Exponenciála, sinus a kosinus
+vyžadují ``v_pi(x)>e/(p-1)`` pro celou vstupní kouli. V Q2(i) tedy
+``exp(2)`` není v podporovaném oboru, zatímco ``exp(2*pi)`` ano.
+
+.. doctest::
+
+   >>> L = Q2i(3)
+   >>> x = L(4, 4, absprec=21)
+   >>> log(exp(x)).is_congruent(x, precision=21)
+   True
+   >>> (power(1+x, Fraction(1, 3))**3).is_congruent(1+x)
+   True
+   >>> bod = x+L(0, 16, absprec=23)
+   >>> taylor(exp, x, order=24)(bod).is_congruent(exp(bod), precision=21)
+   True
+
+``log1p`` konverguje už při ``v_pi(x)>=1``. Kontrola přesnosti zahrnuje
+všechny pozdější členy s mocninou p ve jmenovateli. Ve větveném dyadickém
+případě může velmi hrubý vstup ``O(pi)`` dát pouze ``O(1)``; nejde o
+přesnou nulu. Výstupní koule zahrnuje chybu vstupu i celý zbytek řady.
+
+Obecný logaritmus přijímá koule neobsahující nulu. Výchozí větev je
+``log(p)=0``. Parametr ``p_branch`` zadává log(p), zatímco ``pi_branch``
+zadává log(pi); použít lze nejvýše jeden. Z přesného vztahu
+``pi**e=p*u0`` plyne ``log(pi)=(p_branch+log(u0))/e``. V Q2(i) je u0=i,
+jehož logaritmus je nula. V jiném Eisensteinově poli tomu tak být nemusí.
+
+.. doctest::
+
+   >>> pi = L(0, 1, absprec=19)
+   >>> log(pi, p_branch=1).contains(Fraction(1, 2))
+   True
+   >>> log(L(2, absprec=19), pi_branch=1).is_congruent(2)
+   True
+   >>> vetev = L(1, 1, absprec=7)
+   >>> log(pi, p_branch=vetev).precision
+   5
+   >>> log1p(L.O(1)).precision
+   0
+
+Konečná přesnost zadané větve se zachovává a dělení číslem e ji může
+snížit. Vyšší přesnost rodičovského pole nenahradí chybějící číslice
+existující koule. Veřejné ``sqrt`` a ``teichmuller`` zatím podporují Qp;
+vyčíslení thety a zety v rozšířeních a nekomutativní analytické funkce
+zůstávají dalším vývojem. Odvození mezí, nezávislé testy a další příklady
+jsou v :doc:`kapitole o kvadratické analýze <extension_analytic>` a ve
+spustitelném příkladu ``examples/quadratic_analysis.py``.
+
 Jak funguje bridge
 ------------------
 

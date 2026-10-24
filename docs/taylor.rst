@@ -35,9 +35,10 @@ provide a certified Taylor expansion.
 Local numerical expansions
 ---------------------------
 
-At a p-adic center, ``taylor`` returns a ``TaylorExpansion``. Supported
+At a Qp or certified quadratic center, ``taylor`` returns a ``TaylorExpansion``. Supported
 functions are polynomials, exp, log, log1p, sin and cos. The logarithm uses
-the same default Iwasawa branch log(p)=0 as the analytic API.
+the same default Iwasawa branch log(p)=0 as the analytic API. Absolute
+precision counts the target uniformizer pi, with v_pi(p)=e.
 
 .. doctest::
 
@@ -55,6 +56,11 @@ the same default Iwasawa branch log(p)=0 as the analytic API.
    True
    >>> f.taylor(K(2), order=2)(K(7)).contains(f(Fraction(7)))
    True
+   >>> L = Q2i(3)
+   >>> center = L(4, 4, absprec=21)
+   >>> point = center+L(0, 16, absprec=23)
+   >>> taylor(exp, center, order=24)(point).is_congruent(exp(point), 21)
+   True
 
 ``coefficients[n]`` encloses f^(n)(center)/n!. Evaluating the object
 propagates their uncertainty and the argument's uncertainty, then adds the
@@ -66,27 +72,30 @@ Remainder bounds and convergence
 --------------------------------
 
 For exp, sin and cos, both the center and displacement must lie in the
-supported exponential disc. Set h=x-center and v=v_p(h)>1/(p-1).
+supported exponential disc. Set h=x-center and v=v_pi(h)>e/(p-1).
 Every derivative value at the center is p-integral, and Legendre's bound
 gives, for all k>=N,
 
 .. math::
 
-   v_p\left(\frac{f^{(k)}(a)h^k}{k!}\right)
-      \geq k\left(v-\frac{1}{p-1}\right),\qquad
-   R_N(h)\in O\left(p^{\left\lceil N(v-1/(p-1))\right\rceil}\right).
+   v_\pi\left(\frac{f^{(k)}(a)h^k}{k!}\right)
+      \geq k\left(v-\frac{e}{p-1}\right),\qquad
+   R_N(h)\in O\left(\pi^{\left\lceil N(v-e/(p-1))\right\rceil}\right).
 
 For log at a, put u=h/a. For log1p at a, put u=h/(1+a).
-Require v_p(u)>=1. The omitted log(1+u) terms satisfy
+Require v_pi(u)>=1. The omitted log(1+u) terms satisfy
 
 .. math::
 
-   v_p(u^k/k)\geq k\,v_p(u)-\lfloor\log_p k\rfloor,
+   v_\pi(u^k/k)\geq k\,v_\pi(u)-e\lfloor\log_p k\rfloor,
    \qquad
-   R_N(h)\in O\left(p^{N v_p(u)-\lfloor\log_p N\rfloor}\right).
+   R_N(h)\in O\left(\pi^{T(N,v_\pi(u))}\right).
 
-The lower bound is nondecreasing for integral v_p(u)>=1. It bounds the
-whole tail, including later denominator spikes at powers of p.
+Here T(N,s) is the minimum of ``k*s-e*floor(log_p(k))`` over every k>=N,
+computed by inspecting later powers of p as described in
+:doc:`extension_analytic`. For e=1 the expression is already nondecreasing;
+for ramified fields it can decrease later. The envelope bounds the whole
+tail, including those denominator spikes.
 For polynomials, the finite omitted coefficients supply the bound directly;
 there is no convergence restriction. If none are omitted,
 ``tail_precision`` returns ``None``: only coefficient/input uncertainty remains.

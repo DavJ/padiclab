@@ -242,9 +242,9 @@ The existing ``GaussianBridge.padic_algebra`` and quaternion bridge still
 return their documented coefficient algebras. The separate :doc:`ramified`
 engine now includes Q2(i) in a certified uniformizer basis. The
 :doc:`local_bridges` adapters select actual local fields with an explicit
-generator image. Other extension degrees, general isomorphisms and extension
-analytic functions remain later steps. Existing Qp analytic functions do
-not acquire a larger domain merely by introducing this field class.
+generator image. The :doc:`extension_analytic` layer now supplies elementary
+functions, principal-unit powers and Taylor expansions in this field.
+Other extension degrees and general isomorphisms remain later steps.
 ``Polynomial`` evaluation already works by arithmetic in the chosen field.
 
 Validation includes exhaustive small residue fields, SymPy polynomial

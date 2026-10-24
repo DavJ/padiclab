@@ -10,7 +10,7 @@ Architecture and contribution guide
    * - ``core``
      - Exact rational conversion, prime validation and immutable Qp balls
    * - ``analytic``
-     - Local series, log branches, square roots and principal-unit powers
+     - Certified Qp/quadratic local series, log(p)/log(pi) branches and powers; Qp square roots
    * - ``extensions``
      - Certified unramified quadratic fields, common ideal-ball precision, exact quadratic residues and Frobenius
    * - ``ramified``
@@ -46,6 +46,12 @@ Unramified bases are validated by irreducibility modulo p; ramified bases
 by the Eisenstein criterion. Their valuations, residue degrees and norm/trace
 precision are different. Read :doc:`extensions` and :doc:`ramified` before
 adapting scalar-generic algebras or analytic functions to a larger field.
+
+The shared analytic layer uses exact rational coordinate sums and rounds
+only the result. Its factorial bounds scale by the ramification index;
+logarithmic bounds inspect all future denominator spikes. Input ideals and
+finite branch values have independent error bounds. See
+:doc:`extension_analytic` before extending these algorithms to higher degree.
 
 The harmonic layer also uses only the standard library for its exact
 cyclotomic arithmetic. Its functions have rational/cyclotomic values in a
