@@ -185,8 +185,9 @@ known coefficient precision, including requests above the default.
 
 The adapters do not make every nonzero quaternion invertible: split
 algebras have zero divisors, and a reduced norm ball containing zero cannot
-be inverted. Extension-field analytic functions and comparisons of complex
-and p-adic limits or zeta zeros require further mathematics.
+be inverted. The scalar field images now support :doc:`extension_analytic`.
+They are evaluated in their own local convergence domains; comparisons of
+complex and p-adic limits or zeta zeros require separate mathematics.
 
 Independent checks
 -------------------

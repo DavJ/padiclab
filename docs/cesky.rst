@@ -234,6 +234,116 @@ polynom a funguje i nad lichými prvočísly. Odvození přesnosti, příklady
 se zápornou valuací a převod přesného gaussovského zdroje najdeš v
 :doc:`kapitole o rozvětvených polích <ramified>`.
 
+Analytické funkce v kvadratických polích
+-----------------------------------------
+
+``exp``, ``log1p``, ``log``, ``sin``, ``cos``, ``power`` a lokální
+``taylor`` nyní pracují i v obou ověřených kvadratických polích, včetně
+Q2(i). Přesnost i valuace používají uniformizátor cílového pole: valuace pi
+je jedna a valuace p je index rozvětvení e. Exponenciála, sinus a kosinus
+vyžadují ``v_pi(x)>e/(p-1)`` pro celou vstupní kouli. V Q2(i) tedy
+``exp(2)`` není v podporovaném oboru, zatímco ``exp(2*pi)`` ano.
+
+.. doctest::
+
+   >>> L = Q2i(3)
+   >>> x = L(4, 4, absprec=21)
+   >>> log(exp(x)).is_congruent(x, precision=21)
+   True
+   >>> (power(1+x, Fraction(1, 3))**3).is_congruent(1+x)
+   True
+   >>> bod = x+L(0, 16, absprec=23)
+   >>> taylor(exp, x, order=24)(bod).is_congruent(exp(bod), precision=21)
+   True
+
+``log1p`` konverguje už při ``v_pi(x)>=1``. Kontrola přesnosti zahrnuje
+všechny pozdější členy s mocninou p ve jmenovateli. Ve větveném dyadickém
+případě může velmi hrubý vstup ``O(pi)`` dát pouze ``O(1)``; nejde o
+přesnou nulu. Výstupní koule zahrnuje chybu vstupu i celý zbytek řady.
+
+Obecný logaritmus přijímá koule neobsahující nulu. Výchozí větev je
+``log(p)=0``. Parametr ``p_branch`` zadává log(p), zatímco ``pi_branch``
+zadává log(pi); použít lze nejvýše jeden. Z přesného vztahu
+``pi**e=p*u0`` plyne ``log(pi)=(p_branch+log(u0))/e``. V Q2(i) je u0=i,
+jehož logaritmus je nula. V jiném Eisensteinově poli tomu tak být nemusí.
+
+.. doctest::
+
+   >>> pi = L(0, 1, absprec=19)
+   >>> log(pi, p_branch=1).contains(Fraction(1, 2))
+   True
+   >>> log(L(2, absprec=19), pi_branch=1).is_congruent(2)
+   True
+   >>> vetev = L(1, 1, absprec=7)
+   >>> log(pi, p_branch=vetev).precision
+   5
+   >>> log1p(L.O(1)).precision
+   0
+
+Konečná přesnost zadané větve se zachovává a dělení číslem e ji může
+snížit. Vyšší přesnost rodičovského pole nenahradí chybějící číslice
+existující koule. Veřejné ``sqrt`` a ``teichmuller`` zatím podporují Qp;
+vyčíslení thety a zety v rozšířeních a nekomutativní analytické funkce
+zůstávají dalším vývojem. Odvození mezí, nezávislé testy a další příklady
+jsou v :doc:`kapitole o kvadratické analýze <extension_analytic>` a ve
+spustitelném příkladu ``examples/quadratic_analysis.py``.
+
+Diferenciální a integrální počet
+--------------------------------
+
+``AnalyticSeries`` uchovává analytickou řadu nad Qp nebo ověřeným
+kvadratickým polem, její přesný střed, definiční kouli a mez všech
+vynechaných koeficientů. Podporuje derivace libovolného nezáporného celého
+řádu, lokální primitivní funkce, sčítání a násobení. Přesné koeficienty
+zůstávají přesné, konečné koeficientové koule si zachovávají nejistotu.
+
+.. doctest::
+
+   >>> K = Qp(3, 3)
+   >>> f = AnalyticSeries.from_polynomial(K, Polynomial([1, 2, 3]), center=2, precision=18)
+   >>> f.derivative()(5).contains(32)
+   True
+   >>> f.antiderivative(constant=7)(2).contains(7)
+   True
+   >>> L = Q2i(3)
+   >>> rada = AnalyticSeries.from_function(exp, L, order=48, precision=21)
+   >>> x = L(4, 4, absprec=25)
+   >>> rada.derivative(2)(x, precision=21).is_congruent(exp(x), 21)
+   True
+   >>> rada.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
+   True
+
+``from_function`` má doložené meze pro exp, sin, cos, log1p a log;
+logaritmus používá větev log(p)=0. ``from_polynomial`` převádí konečný
+polynom v původní proměnné x na rozvoj v x-center. Samotný konstruktor
+přijímá známý prefix a povinné ``tail_bound=(A,B)``: pro každý vynechaný
+koeficient a_n se předpokládá ``v_pi(a_n)>=A+B*n``. Uživatelskou mez
+nelze odvodit jen z konečného prefixu. Výsledek zahrnuje všechny řady,
+které tuto podmínku splňují; neznámý ocas se nedoplňuje přesnými nulami.
+
+``radius=r`` znamená celou kouli ``v_pi(x-center)>=r``. Pro nekonečný
+ocas musí platit r+B>0. Výchozí přesnost vyčíslení se omezí dostupnými
+koeficienty, vstupem a celým zbytkem řady. Výslovný požadavek na vyšší
+nepodloženou přesnost vyvolá ``PrecisionError``.
+
+.. doctest::
+
+   >>> kratka = AnalyticSeries(K, [1], radius=1, tail_bound=(0, 0), precision=18)
+   >>> kratka(3).precision
+   1
+   >>> nejista = AnalyticSeries.from_polynomial(L, [0, L(1, absprec=9)])
+   >>> nejista.antiderivative()[2].precision
+   7
+
+Primitivní funkce dělí koeficient číslem n+1. Každá mocnina p v tomto
+jmenovateli ubere e číslic uniformizátoru; mez ocasu proto zahrnuje i
+všechny pozdější zhoršené členy. Primitivní funkce má zadanou hodnotu ve
+středu. Integrace vůči Haarově či p-adické míře má samostatné API a jiný
+význam. Veřejný Volkenbornův integrál, diferenciální rovnice a derivace
+ve více proměnných zůstávají navazujícími kroky. Odvození, obory i další
+příklady jsou v :doc:`kapitole o lokálním počtu <calculus>`;
+spustit lze ``python examples/local_calculus.py``.
+
 Jak funguje bridge
 ------------------
 

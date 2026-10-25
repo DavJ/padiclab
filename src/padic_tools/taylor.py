@@ -20,10 +20,10 @@ class TaylorExpansion:
     entire omitted tail. ``tail_precision(x)`` reports that remainder's
     absolute p-adic order, separately from coefficient/input uncertainty.
     """
-    center: Padic
+    center: object
     coefficients: tuple
     _kind: str
-    _scale: Padic | None
+    _scale: object
     _remainder: tuple
 
     def __init__(self, *args, **kwargs):
@@ -35,7 +35,7 @@ class TaylorExpansion:
         return len(self.coefficients)
 
     def tail_precision(self, x):
-        """Return B with remainder in O(p**B), or None for an exact polynomial.
+        """Return B with remainder in O(pi**B), or None for an exact polynomial.
 
         Raises outside the certified local convergence domain. A short
         expansion can legitimately give a coarse answer.
@@ -44,27 +44,27 @@ class TaylorExpansion:
         if self._kind == "polynomial":
             if not self._remainder:
                 return None
-            return min((c.v if isinstance(c, Padic) else valuation(c, h.p))
+            e = analytic._ramification_index(h)
+            return min((c.v if analytic._is_ball(c) else e*valuation(c, h.p))
                        + n*h.v for n, c in enumerate(self._remainder, self.order))
         if self._kind in ("exp", "sin", "cos"):
             analytic._exp_domain(h)
-            # For all k>=order: v(h**k/k!) >= k*(v(h)-1/(p-1)).
-            slope = h.v*(h.p-1)-1
+            # For all k>=order: v_pi(h**k/k!) >= k*(v_pi(h)-e/(p-1)).
+            slope = h.v*(h.p-1)-analytic._ramification_index(h)
             return (self.order*slope + h.p-2) // (h.p-1)
         ratio = h / self._scale
         if ratio.v < 1:
-            raise DomainError("log Taylor expansion requires v_p((x-center)/scale) >= 1")
-        # k*v(ratio)-floor(log_p(k)) is nondecreasing for v(ratio)>=1.
-        return self.order*ratio.v - analytic._floor_log(self.order, h.p)
+            raise DomainError("log Taylor expansion requires v_pi((x-center)/scale) >= 1")
+        return analytic._log_tail_bound(self.order, ratio.v, h.p, analytic._ramification_index(h))
 
-    def __call__(self, x) -> Padic:
+    def __call__(self, x):
         """Evaluate with coefficient, input and analytic-tail uncertainty."""
         bound = self.tail_precision(x)
         h = self.center.field(x) - self.center
         value = self.coefficients[-1]
         for c in reversed(self.coefficients[:-1]):
             value = value*h + c
-        if not isinstance(value, Padic):
+        if not analytic._is_ball(value):
             value = self.center.field(value)
         return value if bound is None else value + self.center.field.O(bound)
 
@@ -73,14 +73,14 @@ def taylor(function, center=0, *, order=10):
     """Taylor coefficients f^(n)(center)/n!, n=0,...,order-1.
 
     A Polynomial at an exact rational center returns a formal PowerSeries.
-    At a Padic center, polynomials and exp/log/log1p/sin/cos return a
+    At a Qp or certified quadratic center, polynomials and exp/log/log1p/sin/cos return a
     TaylorExpansion with numerical tail bounds. The logarithm uses log(p)=0.
     Rational-centered standard exp/sin/cos/log1p jets at zero, and log at one,
     are also exact PowerSeries. Arbitrary numerical callables are rejected;
     derivatives are never inferred from finite differences.
     """
     _order(order)
-    if not isinstance(center, Padic):
+    if not analytic._is_ball(center):
         a = exact(center)
         if isinstance(function, Polynomial):
             return PowerSeries(function.shift(a).coefficients, order)

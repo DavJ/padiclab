@@ -18,8 +18,9 @@ Implemented
 * Certified Eisenstein quadratic fields, including Q2(i) with pi=1+i,
   weighted valuation, staggered Qp coordinate precision, exact prime
   residues and different-aware norm/trace bounds at tame and wild primes.
-* Local exp/log/sin/cos, principal-unit powers, odd/dyadic square roots and
-  simple-root Hensel lifting.
+* Local exp/log/log1p/sin/cos and principal-unit powers over Qp and both
+  quadratic engines, with ramification-aware tails and log(p)/log(pi)
+  branches. Odd/dyadic square roots and simple-root Hensel lifting over Qp.
 * Multiplicative theta3 and theta4 constants with tail bounds.
 * Exact Bernoulli/classical-zeta special values and numerical even KL branches
   on Zp away from the point s=1, with a documented branch convention.
@@ -34,7 +35,10 @@ Implemented
   tails for odd primes and p=2.
 * Rational-centered polynomial Taylor jets, exact polynomial translation,
   and local p-adic Taylor expansions with certified tails for polynomials,
-  exp/log/log1p/sin/cos.
+  exp/log/log1p/sin/cos, including certified quadratic centers.
+* Analytic coefficient-ball families over Qp and both quadratic fields,
+  exact/function factories, explicit closed discs, full coefficient-tail
+  bounds, arbitrary-order derivatives, normalized primitives and arithmetic.
 * Rational/Gaussian diagonal bridges, selected split places, quaternion and
   biquaternion scalar base changes, and an explicit even-Clifford isomorphism.
 * Chosen Gaussian local-field embeddings at all primes, with absolute
@@ -55,11 +59,18 @@ Implemented
 Next mathematical features
 --------------------------
 
+The next calculus steps are a public Volkenborn integral (starting with
+polynomials), local ODE solvers with precision certificates and multivariate
+derivatives. General analytic-series inversion/composition and sharper
+repeated-primitive bounds also remain future work.
+
 1. Broader independent Sage/PARI oracle coverage and performance baselines,
    particularly around KL branches and near poles.
 2. Higher-degree unramified/Eisenstein extensions and certified changes of
    ramified power basis. Both degree-two field engines already propagate
-   ideal precision; formal coefficient algebras retain their wider scope.
+   ideal precision and support elementary analysis. Extension square roots,
+   public Teichmueller lifts and noncommutative analytic functions remain
+   separate work; formal coefficient algebras retain their wider scope.
 3. Singular Hensel lifting, general polynomial factorization, rectangular
    matrix/kernel/rank algorithms with precision certificates, optimal lattice
    precision and optional sparse/accelerated arithmetic backends.

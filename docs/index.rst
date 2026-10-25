@@ -45,6 +45,7 @@ across packages: the prime, branch and Euler factor must match.
    Precision <precision>
    Unramified quadratic fields <extensions>
    Ramified quadratic fields <ramified>
+   Quadratic analytic functions <extension_analytic>
    Special functions <functions>
    Integral transforms <transforms>
    Bounded measures <measures>
@@ -52,6 +53,7 @@ across packages: the prime, branch and Euler factor must match.
    Harmonic analysis <harmonic>
    Wavelets and diffusion <wavelets>
    Taylor expansions <taylor>
+   Analytic series and calculus <calculus>
    Symbolic algebra <symbolic>
    Algebraic bridges <bridges>
    Chosen local places <local_bridges>

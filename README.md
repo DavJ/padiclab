@@ -35,11 +35,12 @@ assert z.is_congruent(Fraction(-31, 30))
 |---|---|
 | Numerical | Qp balls, valuations, digits, inverses, precision propagation, simple-root Hensel lifting |
 | Local fields | Certified unramified and Eisenstein quadratic extensions, Q3(i) and Q2(i), ideal-ball precision, exact residue fields and norm/trace; lifted Frobenius for unramified fields |
-| Analytic | exp, Iwasawa log with explicit log(p), log1p, sin, cos, principal-unit powers, square roots including p=2 |
+| Analytic | exp, log1p, sin, cos and principal-unit powers over Qp and certified quadratic fields; explicit log(p)/log(pi) branches; Qp square roots including p=2 |
 | Special functions | Multiplicative theta3, theta4 constants, exact Bernoulli/zeta values, numerical even KL zeta branches on Zp away from s=1 |
 | Symbolic | Rational polynomials, Euclidean division/gcd, formal series, composition/calculus, optional SymPy function nodes/evaluation |
 | Transforms | Exact atomic and bounded rational Amice measures, moments/polynomial integration, unit restriction, certified branched Mellin, local Laplace, Amice evaluation and additive convolution |
 | Taylor | Exact polynomial shifts and rational jets; local p-adic exp/log/log1p/sin/cos and polynomial expansions with whole-tail enclosures |
+| Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, explicit domains and tail bounds, derivatives of arbitrary order and normalized local primitives |
 | Harmonic analysis | Exact additive characters, real Haar integration, finite Fourier transforms, compactly supported test functions, inversion, Parseval and convolution |
 | Wavelets and operators | Exact finite Kozyrev bases and reconstruction, whole-Qp integer-order Vladimirov images with analytic tails, conservative ball generators and numerical diffusion |
 | Algebraic bridges | Q and Q[i] to independent completions; chosen split, unramified and ramified local-field images; rational quaternions and biquaternions |
@@ -66,8 +67,8 @@ irreducibility modulo p. `[1, 0, 1]` defines Q3(i); it is rejected over Q5
 quadratic extension of Q2. Each element is a whole ideal ball with common
 coordinate precision, including negative valuations. `norm()` is algebraic;
 `absolute_value()` is the p-adic magnitude. See [the extension chapter](docs/extensions.rst)
-for error bounds, exact residues and scope. Higher degrees, extension
-analytic functions are subsequent steps; dedicated field adapters are included.
+for error bounds, exact residues and scope. Elementary analytic functions
+and dedicated field adapters are included; higher degrees remain future work.
 
 ## Ramified Q2(i) and Eisenstein fields
 
@@ -118,7 +119,51 @@ The same API selects Qp at split primes and an unramified quadratic field
 at primes congruent to 3 modulo 4. `root_sign` explicitly chooses the
 generator image. See [chosen local places](docs/local_bridges.rst) for
 guard digits, conjugations, algebraic norms and the Clifford commuting square.
-Extension analytic functions remain a later step.
+The field images support the elementary functions described below.
+
+## Analysis over quadratic local fields
+
+```python
+from padic_tools import exp, log, log1p, power, taylor
+
+L = Q2i(precision=3)
+x = L(4, 4, absprec=21)
+assert log(exp(x)).is_congruent(x, precision=21)
+assert (power(1+x, Fraction(1, 3))**3).is_congruent(1+x)
+pi = L(0, 1, absprec=19)
+assert log(pi, p_branch=1).contains(Fraction(1, 2))
+point = x+L(0, 16, absprec=23)
+assert taylor(exp, x, order=24)(point).is_congruent(exp(point), 21)
+```
+
+Domains use `v_pi(pi)=1`, `v_pi(p)=e`: exp/sin/cos require
+`v_pi(x)>e/(p-1)`, log1p requires `v_pi(x)>=1`, and log accepts balls
+excluding zero. Logarithm defaults to `log(p)=0`; choose at most one of
+`p_branch` and `pi_branch`. Finite branch uncertainty and all later
+denominator spikes are included in the output ball. See
+[quadratic analysis](docs/extension_analytic.rst) for the full proof and
+precision contracts. Extension sqrt/Teichmueller lifts and theta/zeta
+evaluation in extension fields remain future work.
+
+## Differential and integral calculus
+
+```python
+from padic_tools import AnalyticSeries, Q2i, exp
+
+L = Q2i(precision=3)
+s = AnalyticSeries.from_function(exp, L, order=48, precision=21)
+x = L(4, 4, absprec=25)
+assert s.derivative(2)(x, precision=21).is_congruent(exp(x), 21)
+assert s.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
+```
+
+The series retains bounds for every omitted coefficient. Derivatives and
+primitives transform those bounds, including all later p-power denominator
+spikes. Exact coefficients remain exact; finite balls preserve their
+uncertainty. A custom prefix needs an explicit coefficient-tail premise.
+See [local calculus](docs/calculus.rst) and run
+`python examples/local_calculus.py`. Local primitives, Haar integration and
+integration against p-adic measures have separate APIs and meanings.
 
 ## Matrices and certified linear systems
 

@@ -253,8 +253,10 @@ The :doc:`local_bridges` adapters now evaluate Gaussian and (bi)quaternion
 sources in this field with explicit orientation and absolute precision. The
 existing coefficient-algebra bridge methods keep their documented return
 types. Arbitrary ramified polynomials need a certified change to an
-integral uniformizer basis; higher extension degrees, extension analytic
-functions and matrix solvers also remain subsequent work.
+integral uniformizer basis; higher extension degrees remain subsequent work.
+Certified square matrix solvers are described in :doc:`linalg`. Elementary
+functions, logarithm branches and Taylor expansions over this field are
+implemented in :doc:`extension_analytic`, with ramification-aware tails.
 
 Validation covers odd and negative pi precision, whole-ideal perturbations,
 exact small quotient sizes, independent SymPy polynomial inverses and

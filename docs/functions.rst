@@ -12,6 +12,14 @@ modulo 4. ``power`` accepts only principal units in the exponential domain
 and exponents in Zp. The tail arguments are in :doc:`precision`; compare
 the `Sage analytic-function documentation <https://doc.sagemath.org/html/en/reference/padics/sage/rings/padics/padic_generic_element.html>`_.
 
+These elementary functions also accept certified quadratic local fields.
+Their valuations and absolute precision count the chosen uniformizer, so
+the exponential condition becomes ``v_pi(x)>e/(p-1)``. ``log`` supports
+either ``p_branch`` or ``pi_branch``; the default remains log(p)=0.
+Ramified log1p can lose precision on shallow balls. Read
+:doc:`extension_analytic` for the domains, branch relation and full error
+bounds. Public ``sqrt`` and ``teichmuller`` remain Qp-only.
+
 Multiplicative theta
 --------------------
 
