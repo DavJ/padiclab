@@ -341,8 +341,9 @@ Primitivní funkce dělí koeficient číslem n+1. Každá mocnina p v tomto
 jmenovateli ubere e číslic uniformizátoru; mez ocasu proto zahrnuje i
 všechny pozdější zhoršené členy. Primitivní funkce má zadanou hodnotu ve
 středu. Integrace vůči Haarově či p-adické míře má samostatné API a jiný
-význam. Diferenciální rovnice a derivace ve více proměnných zůstávají
-navazujícími kroky; Volkenbornův integrál je popsaný níže. Odvození, obory i další
+význam. Lineární diferenciální rovnice a Volkenbornův integrál jsou popsané
+níže; soustavy, nelineární rovnice a derivace ve více proměnných zůstávají
+navazujícími kroky. Odvození, obory i další
 příklady jsou v :doc:`kapitole o lokálním počtu <calculus>`;
 spustit lze ``python examples/local_calculus.py``.
 
@@ -377,6 +378,38 @@ oba obrazy tvoří stejnou kouli: Volkenbornův funkcionál není translačně
 invariantní Haarův integrál. V rozšíření nad Qp je parametrem stále Zp,
 nikoliv celý okruh rozšíření. Definici, odvození zbytku a nezávislé kontroly
 najdeš v :doc:`kapitole o Volkenbornově integraci <volkenborn>`.
+
+Lokální diferenciální rovnice
+-----------------------------
+
+``solve_linear_ode(a, initial, forcing=b)`` řeší y'=a(x)y+b(x) se zadanou
+hodnotou ve společném přesném středu řad. Koeficient a musí být
+``AnalyticSeries``; b může být také skalární konstanta. Výsledek je
+analytická řada s prefixem délky ``order``, doloženým oborem konvergence
+a mezí celého vynechaného ocasu. Pracuje nad Qp i oběma kvadratickými poli.
+
+.. doctest::
+
+   >>> K = Qp(3, 3)
+   >>> a = AnalyticSeries.from_polynomial(K, [-1])
+   >>> y = solve_linear_ode(a, 3, forcing=2, order=64, precision=21)
+   >>> y(9, precision=21).is_congruent(2+exp(K(-9, absprec=45)), 21)
+   True
+   >>> y(0, precision=60).contains(3)
+   True
+
+Mez používá koeficienty násobené n!, takže pokrývá i všechny pozdější
+ztráty při dělení prvočíslem. Automatický obor je dostatečný a může být
+menší než skutečný obor řešení. Konečná nejistota vstupů se zachovává;
+neznámé koeficienty vstupních řad se nenahrazují přesnými nulami.
+Zvýšení ``order`` neobnoví chybějící vstupní číslice.
+
+Pro každé pevné zadání je řešení jediné ve třídě analytických mocninných
+řad ve zvoleném středu. Vrácené koule obsahují všechna přípustná řešení,
+ale kvůli ztrátě korelací i další funkce. Soustavy, nelineární rovnice,
+singulární body a optimální přesnost zůstávají dalším krokem. Odvození
+a odkazy jsou v :doc:`kapitole o lokálních rovnicích <ode>`; spustit lze
+``python examples/linear_ode.py``.
 
 Jak funguje bridge
 ------------------

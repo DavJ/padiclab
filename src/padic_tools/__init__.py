@@ -20,6 +20,7 @@ from .measures import RationalAmiceMeasure
 from .taylor import TaylorExpansion, taylor
 from .calculus import AnalyticSeries
 from .volkenborn import volkenborn_integral
+from .ode import solve_linear_ode
 from .harmonic import (
     CyclotomicValue, PadicTestFunction, additive_character, additive_phase,
     finite_fourier, haar_volume,
@@ -46,6 +47,7 @@ __all__ = [
     "AtomicMeasure", "RationalAmiceMeasure", "TaylorExpansion", "taylor",
     "AnalyticSeries",
     "volkenborn_integral",
+    "solve_linear_ode",
     "CyclotomicValue", "PadicTestFunction", "additive_character", "additive_phase",
     "finite_fourier", "haar_volume",
     "KozyrevBasis", "kozyrev_wavelet", "BallVladimirov", "DiffusionState",

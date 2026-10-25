@@ -42,6 +42,7 @@ assert z.is_congruent(Fraction(-31, 30))
 | Taylor | Exact polynomial shifts and rational jets; local p-adic exp/log/log1p/sin/cos and polynomial expansions with whole-tail enclosures |
 | Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, explicit domains and tail bounds, derivatives of arbitrary order and normalized local primitives |
 | Volkenborn integration | Exact polynomial/Bernoulli moments and certified analytic-series integrals, explicit affine charts and extension-valued coefficients |
+| Local ODEs | First-order linear equations with variable analytic coefficients over Qp/quadratic fields, ball initial data and whole-solution tail certificates |
 | Harmonic analysis | Exact additive characters, real Haar integration, finite Fourier transforms, compactly supported test functions, inversion, Parseval and convolution |
 | Wavelets and operators | Exact finite Kozyrev bases and reconstruction, whole-Qp integer-order Vladimirov images with analytic tails, conservative ball generators and numerical diffusion |
 | Algebraic bridges | Q and Q[i] to independent completions; chosen split, unramified and ramified local-field images; rational quaternions and biquaternions |
@@ -180,6 +181,24 @@ assert volkenborn_integral(x*x) == Fraction(1, 6)
 The integrator also accepts `AnalyticSeries` with explicit affine parameters
 and a proof-backed whole-tail bound. See [Volkenborn integration](docs/volkenborn.rst)
 for domains, finite precision and the distinction from Haar integration.
+
+## Local differential equations
+
+```python
+from padic_tools import AnalyticSeries, Qp, exp, solve_linear_ode
+
+K = Qp(3, 3)
+a = AnalyticSeries.from_polynomial(K, [-1])
+y = solve_linear_ode(a, 3, forcing=2, order=64, precision=21)
+assert y(0, precision=60).contains(3)
+assert y(9, precision=21).is_congruent(2 + exp(K(-9, absprec=45)), 21)
+```
+
+This solves y'=-y+2, y(0)=3. Variable coefficients and uncertain inputs use
+the same API. The returned `AnalyticSeries` includes a sufficient convergence
+disc and a bound for every omitted solution coefficient. See
+[local linear ODEs](docs/ode.rst) for the proof and scope, and run
+`python examples/linear_ode.py`.
 
 ## Matrices and certified linear systems
 
