@@ -1,6 +1,10 @@
 Bounded p-adic measures
 =======================
 
+The :doc:`volkenborn` functional has a separate API and normalization.
+Its normalized averages and Bernoulli moments are not silently treated as
+the bounded measures in this chapter.
+
 Rational Amice data
 --------------------
 

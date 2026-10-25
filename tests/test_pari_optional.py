@@ -12,6 +12,52 @@ from padic_tools import AtomicMeasure, BallVladimirov, EisensteinQuadraticField,
 from padic_tools import Matrix
 from padic_tools import log1p, power
 from padic_tools import AnalyticSeries, sin, cos
+from padic_tools import Polynomial, volkenborn_integral
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p", [2, 3, 5])
+def test_volkenborn_polynomial_and_exponential_against_pari(p):
+    script = (
+        f"p={p};f=1/p-2*(1+p*t)+3*(1+p*t)^3+(1+p*t)^4;\n"
+        "print(sum(n=0,4,polcoef(f,n)*bernfrac(n)));\n"
+        "z=p^2+O(p^45);q=z/(exp(z)-1);print(lift(q));print(lift(exp(z)*q));quit\n"
+    )
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 3
+    f = Polynomial([Fraction(1, p), -2, 0, 3, 1])
+    assert volkenborn_integral(f, shift=1, scale=p) == oracle[0]
+    s = AnalyticSeries.from_function(exp, Qp(p, 3), order=100, precision=21)
+    assert volkenborn_integral(s, scale=p*p, precision=21).contains(oracle[1])
+    assert volkenborn_integral(s, shift=p*p, scale=p*p, precision=21).contains(oracle[2])
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p,sign", [(2, -1), (2, 1), (3, -1), (3, 1)])
+def test_quadratic_volkenborn_exponential_against_pari_scalar_identities(p, sign):
+    script = (
+        f"p={p};X=p^2+O(p^45);Y=2*p^2+O(p^45);\n"
+        "U=exp(X)*cos(Y)-1;V=exp(X)*sin(Y);D=U^2+V^2;\n"
+        "A=(X*U+Y*V)/D;B=(Y*U-X*V)/D;print(lift(A));print(lift(B));\n"
+        "C=exp(2*p^2+O(p^45))*cos(p^2+O(p^45));"
+        "E=exp(2*p^2+O(p^45))*sin(p^2+O(p^45));\n"
+        "print(lift(C*A-E*B));print(lift(C*B+E*A));quit\n"
+    )
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 4
+    def coordinates(a, b):
+        return (a-sign*b, sign*b) if p == 2 else (a, sign*b)
+    K = GaussianLocalPlace(Qp(p, 3), root_sign=sign).field
+    s = AnalyticSeries.from_function(exp, K, order=100, precision=21)
+    z, a = coordinates(p*p, 2*p*p), coordinates(2*p*p, p*p)
+    assert volkenborn_integral(s, scale=z, precision=21).contains(coordinates(*oracle[:2]))
+    assert volkenborn_integral(s, shift=a, scale=z, precision=21).contains(coordinates(*oracle[2:]))
 
 
 @pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")

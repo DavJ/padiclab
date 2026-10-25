@@ -39,6 +39,8 @@ Implemented
 * Analytic coefficient-ball families over Qp and both quadratic fields,
   exact/function factories, explicit closed discs, full coefficient-tail
   bounds, arbitrary-order derivatives, normalized primitives and arithmetic.
+* Volkenborn integration of exact polynomials and certified analytic-series
+  families, affine charts, extension-valued coefficients and full-tail bounds.
 * Rational/Gaussian diagonal bridges, selected split places, quaternion and
   biquaternion scalar base changes, and an explicit even-Clifford isomorphism.
 * Chosen Gaussian local-field embeddings at all primes, with absolute
@@ -59,8 +61,7 @@ Implemented
 Next mathematical features
 --------------------------
 
-The next calculus steps are a public Volkenborn integral (starting with
-polynomials), local ODE solvers with precision certificates and multivariate
+The next calculus steps are local ODE solvers with precision certificates and multivariate
 derivatives. General analytic-series inversion/composition and sharper
 repeated-primitive bounds also remain future work.
 

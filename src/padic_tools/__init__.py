@@ -19,6 +19,7 @@ from .transforms import AtomicMeasure
 from .measures import RationalAmiceMeasure
 from .taylor import TaylorExpansion, taylor
 from .calculus import AnalyticSeries
+from .volkenborn import volkenborn_integral
 from .harmonic import (
     CyclotomicValue, PadicTestFunction, additive_character, additive_phase,
     finite_fourier, haar_volume,
@@ -44,6 +45,7 @@ __all__ = [
     "PrimeResidueField", "PrimeResidueElement",
     "AtomicMeasure", "RationalAmiceMeasure", "TaylorExpansion", "taylor",
     "AnalyticSeries",
+    "volkenborn_integral",
     "CyclotomicValue", "PadicTestFunction", "additive_character", "additive_phase",
     "finite_fourier", "haar_volume",
     "KozyrevBasis", "kozyrev_wavelet", "BallVladimirov", "DiffusionState",

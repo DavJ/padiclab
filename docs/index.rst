@@ -54,6 +54,7 @@ across packages: the prime, branch and Euler factor must match.
    Wavelets and diffusion <wavelets>
    Taylor expansions <taylor>
    Analytic series and calculus <calculus>
+   Volkenborn integration <volkenborn>
    Symbolic algebra <symbolic>
    Algebraic bridges <bridges>
    Chosen local places <local_bridges>

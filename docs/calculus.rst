@@ -231,8 +231,9 @@ Its prefix alone does not imply a convergent AnalyticSeries. Supply a proven
 tail bound when transferring a custom prefix.
 
 This layer is univariate and uses commutative local fields. General series
-inversion/composition, multivariate differential calculus, a public
-Volkenborn integrator and ODE solvers remain subsequent work. Local
+inversion/composition, multivariate differential calculus and ODE solvers
+remain subsequent work. The :doc:`volkenborn` integrator now accepts
+polynomials and these bounded analytic families. Local
 primitives and measure integrals have different contracts. General p-adic
 functions can have derivative zero without being constant; their global
 integration theory cannot be inferred from this analytic-disc construction.
