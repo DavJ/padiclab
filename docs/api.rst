@@ -58,6 +58,9 @@ Analytic series and local calculus
 .. automodule:: padic_tools.volkenborn
    :members:
 
+.. automodule:: padic_tools.ode
+   :members:
+
 Taylor expansions
 ------------------
 

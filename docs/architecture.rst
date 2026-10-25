@@ -27,6 +27,8 @@ Architecture and contribution guide
      - Analytic coefficient-ball families, full-tail bounds, derivatives and local primitives
    * - ``volkenborn``
      - Exact polynomial moments, affine charts and certified analytic Volkenborn integrals
+   * - ``ode``
+     - Local first-order linear equations, coefficient families and factorial-majorant solution tails
    * - ``harmonic``
      - Complex-place additive characters, real Haar integration and exact finite Fourier transforms
    * - ``wavelets``, ``operators``

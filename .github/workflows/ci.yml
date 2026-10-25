@@ -68,6 +68,7 @@ jobs:
           from padic_tools import Biquaternions, CliffordAlgebra, Gaussian, GaussianLocalPlace, QuaternionBridge
           from padic_tools import Matrix, Polynomial, exact, exp, log, power, taylor, AnalyticSeries
           from padic_tools import volkenborn_integral
+          from padic_tools import solve_linear_ode
           assert zeta_p(-3,Qp(5)).is_congruent("-31/30")
           L = UnramifiedQuadraticField(Qp(3),[1,0,1])
           x = L(1,2)
@@ -118,6 +119,10 @@ jobs:
               assert local_log.derivative()(K.p, precision=60).contains(exact(1)/K.p)
               z = K(K.p**2, absprec=40)
               assert volkenborn_integral(series, scale=K.p**2, precision=21).is_congruent(z/(exp(z)-1), 21)
+              a = AnalyticSeries.from_polynomial(K, [-1])
+              y = solve_linear_ode(a, 3, forcing=2, order=64)
+              assert y(K.p**2, precision=21).is_congruent(2+exp(-z), 21)
+              assert y(0, precision=60).contains(3)
           assert volkenborn_integral(Polynomial([0, 1])) == -exact(1)/2
           PY
       - uses: actions/upload-artifact@v4

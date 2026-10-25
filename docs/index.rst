@@ -55,6 +55,7 @@ across packages: the prime, branch and Euler factor must match.
    Taylor expansions <taylor>
    Analytic series and calculus <calculus>
    Volkenborn integration <volkenborn>
+   Local linear ODEs <ode>
    Symbolic algebra <symbolic>
    Algebraic bridges <bridges>
    Chosen local places <local_bridges>

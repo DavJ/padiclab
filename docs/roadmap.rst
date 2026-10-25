@@ -41,6 +41,9 @@ Implemented
   bounds, arbitrary-order derivatives, normalized primitives and arithmetic.
 * Volkenborn integration of exact polynomials and certified analytic-series
   families, affine charts, extension-valued coefficients and full-tail bounds.
+* Scalar first-order linear ODEs with variable analytic coefficients over Qp
+  and both quadratic fields, exact/ball initial data, automatic sufficient
+  convergence discs and factorial-majorant solution tail bounds.
 * Rational/Gaussian diagonal bridges, selected split places, quaternion and
   biquaternion scalar base changes, and an explicit even-Clifford isomorphism.
 * Chosen Gaussian local-field embeddings at all primes, with absolute
@@ -61,8 +64,8 @@ Implemented
 Next mathematical features
 --------------------------
 
-The next calculus steps are local ODE solvers with precision certificates and multivariate
-derivatives. General analytic-series inversion/composition and sharper
+The next calculus steps are linear ODE systems, nonlinear equations and
+multivariate derivatives. General analytic-series inversion/composition and sharper
 repeated-primitive bounds also remain future work.
 
 1. Broader independent Sage/PARI oracle coverage and performance baselines,

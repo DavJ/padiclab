@@ -3,8 +3,8 @@
 Validated on 25 October 2026 with Python 3.12.14. This records the current
 implemented scope; it is not a formal verification or performance benchmark.
 
-- **848 pytest cases passed**, with no skipped cases in this run. They
-  include **76 independent PARI/GP cases**. GP 2.15.4 was run from a locally
+- **946 pytest cases passed**, with no skipped cases in this run. They
+  include **83 independent PARI/GP cases**. GP 2.15.4 was run from a locally
   extracted Ubuntu package, whose SHA-256 matched its signed package index.
   CI installs GP explicitly; without it, these optional comparisons skip.
 - Exact oracles cover rational/Qp arithmetic, ideal-ball perturbations,
@@ -36,6 +36,16 @@ implemented scope; it is not a formal verification or performance benchmark.
   moments, Bernoulli denominator losses and constant charts.
   Seven further PARI cases check polynomial moments and exponential
   integral identities for p=2,3,5 and both Gaussian local orientations.
+- **91 linear-ODE cases** check variable coefficients, translated centers,
+  genuinely quadratic coefficients, exact/ball initial values and whole
+  coefficient/input families. Independent symbolic integrating factors,
+  rational multiplication-matrix exponentials and admissible omitted input
+  monomials exercise the solution prefix and whole tail, including later
+  p-power denominators, negative disc exponents and structural zero cases.
+  Seven additional PARI cases check variable-coefficient closed solutions
+  and their derivatives for p=2,3,5 and both Gaussian local orientations.
+  The conservative factorial-majorant proof supplies existence, uniqueness
+  within analytic power series, and the full solution-tail certificate.
 - Four of the PARI cases check Gaussian analytic images in both orientations
   over Q3(i) and Q2(i). They use PARI's scalar p-adic exp/sin/cos, scalar
   log of the norm and a separately truncated arctangent polynomial. This
@@ -52,10 +62,10 @@ implemented scope; it is not a formal verification or performance benchmark.
   checks include exact and whole-ball solves, unresolved pivots,
   determinants, inverses and condition exponents. Measure and harmonic
   tests cover the documented transform, wavelet and diffusion contracts.
-- **551 Sphinx documentation examples passed**. Both HTML builds completed
-  with warnings treated as errors. The portable manual contains **628
-  validated internal anchors and 65 pre-rendered native MathML formulas**.
-- Chromium 150 checked both HTML editions offline at **1440x1000 and
+- **584 Sphinx documentation examples passed**. Both HTML builds completed
+  with warnings treated as errors. The portable manual contains **639
+  validated internal anchors and 71 pre-rendered native MathML formulas**.
+- Chromium 156 checked both HTML editions offline at **1440x1000 and
   390x844**. The portable edition had JavaScript disabled; English/Czech
   switching, chapter links, visible formulas and absence of page-width
   overflow passed. The complete multi-page edition also passed language
@@ -65,20 +75,22 @@ implemented scope; it is not a formal verification or performance benchmark.
   with the verified source. All CI wheel smoke checks passed in a fresh
   environment with **no optional dependencies**, including both quadratic
   analytic engines, branches, powers, Taylor evaluation, local calculus
-  and public Volkenborn integration.
+  public Volkenborn integration and local linear ODEs.
 - GitHub Actions for the implementation commit passed all six configured
   jobs: Python **3.10, 3.12 and 3.13**, PARI, documentation and packages.
 
 Reproduce with the commands in README and RELEASING. Examples are
 `python examples/quadratic_analysis.py`, `python examples/local_calculus.py`
-and `python examples/volkenborn.py`.
+`python examples/volkenborn.py` and `python examples/linear_ode.py`.
 The precision/branch arguments are in `docs/extension_analytic.rst`; full
 coefficient-tail, derivative and primitive proofs are in `docs/calculus.rst`.
 The uniform normalized-sum argument and integration tail enclosure are in
 `docs/volkenborn.rst`.
+The coefficient recurrence, factorial majorant, sufficient ODE convergence
+disc and analytic uniqueness argument are in `docs/ode.rst`.
 
 Public extension square roots/Teichmueller lifts, extension-valued theta
 and zeta, general higher-degree fields, noncommutative analytic functions,
-series inversion/composition and ODE solvers
+series inversion/composition, linear ODE systems and nonlinear ODE solvers
 remain outside this step. Agreement of algebraic images or special values
 does not establish a complex/p-adic zero correspondence.

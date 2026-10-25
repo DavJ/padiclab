@@ -12,6 +12,50 @@ from padic_tools import AtomicMeasure, BallVladimirov, EisensteinQuadraticField,
 from padic_tools import Matrix
 from padic_tools import log1p, power
 from padic_tools import AnalyticSeries, sin, cos
+from padic_tools import solve_linear_ode
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p", [2, 3, 5])
+def test_linear_ode_against_pari_closed_variable_coefficient_solution(p):
+    script = (f"p={p};h=p^2+O(p^45);u=exp(h+h^2/2);\n"
+              "print(lift(2+h+u));print(lift(1+(1+h)*u));quit\n")
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 2
+    K, c = Qp(p, 3), Fraction(1, p)
+    a = AnalyticSeries(K, [1, 1], center=c, tail_bound=None)
+    b = AnalyticSeries(K, [-1, -3, -1], center=c, tail_bound=None)
+    y = solve_linear_ode(a, 3, forcing=b, order=80)
+    for model, expected in zip((y, y.derivative()), oracle):
+        assert model(c+p*p, precision=21).contains(expected)
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p,sign", [(2, -1), (2, 1), (3, -1), (3, 1)])
+def test_quadratic_linear_ode_against_pari_scalar_exponential_identities(p, sign):
+    # y=2+h+exp(i*(h+h^2)), with genuine Gaussian ODE coefficients.
+    # Scalar exp/sin/cos provide the oracle, not native POLMOD analytics.
+    script = (f"p={p};a=p^2+O(p^45);b=2*p^2+O(p^45);\n"
+              "u=-b-2*a*b;v=a+a^2-b^2;E=exp(u)*cos(v);F=exp(u)*sin(v);\n"
+              "print(lift(2+a+E));print(lift(b+F));\n"
+              "print(lift(1-2*b*E-(1+2*a)*F));print(lift(-2*b*F+(1+2*a)*E));quit\n")
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 4
+    def coordinates(a, b):
+        return (a-sign*b, sign*b) if p == 2 else (a, sign*b)
+    K = GaussianLocalPlace(Qp(p, 3), root_sign=sign).field
+    a = AnalyticSeries(K, [coordinates(0, 1), coordinates(0, 2)], tail_bound=None)
+    b = AnalyticSeries(K, [coordinates(1, -2), coordinates(0, -5), coordinates(0, -2)], tail_bound=None)
+    y = solve_linear_ode(a, 3, forcing=b, order=80)
+    point = coordinates(p*p, 2*p*p)
+    for model, expected in zip((y, y.derivative()), zip(oracle[::2], oracle[1::2])):
+        assert model(point, precision=21).contains(coordinates(*expected))
 from padic_tools import Polynomial, volkenborn_integral
 
 
