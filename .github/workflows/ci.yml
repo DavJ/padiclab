@@ -66,7 +66,7 @@ jobs:
           /tmp/padic-wheel-check/bin/python - <<'PY'
           from padic_tools import Qp, Q2i, UnramifiedQuadraticField, zeta_p
           from padic_tools import Biquaternions, CliffordAlgebra, Gaussian, GaussianLocalPlace, QuaternionBridge
-          from padic_tools import Matrix, exact, exp, log, power, taylor
+          from padic_tools import Matrix, exact, exp, log, power, taylor, AnalyticSeries
           assert zeta_p(-3,Qp(5)).is_congruent("-31/30")
           L = UnramifiedQuadraticField(Qp(3),[1,0,1])
           x = L(1,2)
@@ -106,6 +106,13 @@ jobs:
               assert taylor(exp, x, order=24)(point).is_congruent(exp(point), 21)
           pi = R(0,1,absprec=19)
           assert log(pi, p_branch=1).contains(exact(1)/2)
+          for K in (Qp(3,3), Q2i(3)):
+              series = AnalyticSeries.from_function(exp, K, order=48, precision=21)
+              x = K(K.p**2, absprec=25)
+              assert series.derivative(2)(x, precision=21).is_congruent(exp(x), 21)
+              assert series.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
+              family = AnalyticSeries(K, [1], radius=1, tail_bound=(0,0), precision=18)
+              assert family(K.p).precision == getattr(K, 'ramification_index', 1)
           PY
       - uses: actions/upload-artifact@v4
         with:

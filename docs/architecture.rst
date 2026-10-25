@@ -23,6 +23,8 @@ Architecture and contribution guide
      - Optional typed symbolic function expressions and safe numeric evaluation
    * - ``transforms``, ``measures``, ``taylor``
      - Exact measure data, bounded Amice transforms and certified local expansions
+   * - ``calculus``
+     - Analytic coefficient-ball families, full-tail bounds, derivatives and local primitives
    * - ``harmonic``
      - Complex-place additive characters, real Haar integration and exact finite Fourier transforms
    * - ``wavelets``, ``operators``

@@ -36,6 +36,9 @@ Implemented
 * Rational-centered polynomial Taylor jets, exact polynomial translation,
   and local p-adic Taylor expansions with certified tails for polynomials,
   exp/log/log1p/sin/cos, including certified quadratic centers.
+* Analytic coefficient-ball families over Qp and both quadratic fields,
+  exact/function factories, explicit closed discs, full coefficient-tail
+  bounds, arbitrary-order derivatives, normalized primitives and arithmetic.
 * Rational/Gaussian diagonal bridges, selected split places, quaternion and
   biquaternion scalar base changes, and an explicit even-Clifford isomorphism.
 * Chosen Gaussian local-field embeddings at all primes, with absolute
@@ -55,6 +58,11 @@ Implemented
 
 Next mathematical features
 --------------------------
+
+The next calculus steps are a public Volkenborn integral (starting with
+polynomials), local ODE solvers with precision certificates and multivariate
+derivatives. General analytic-series inversion/composition and sharper
+repeated-primitive bounds also remain future work.
 
 1. Broader independent Sage/PARI oracle coverage and performance baselines,
    particularly around KL branches and near poles.

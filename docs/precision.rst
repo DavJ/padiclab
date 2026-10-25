@@ -72,6 +72,14 @@ Limits of the guarantee
 The precision formulas are mathematical enclosures implemented and tested
 with exact integer/rational arithmetic; the code is not formally verified.
 Complex images use mpmath numerical precision and are not certified complex
-intervals. Quadratic extensions use coefficient balls, not a full
-uniformizer-based extension-field precision model. Exact rational algebra
-and numerical balls are distinct layers.
+intervals. Certified quadratic fields use whole uniformizer ideals as
+described in :doc:`extensions` and :doc:`ramified`; formal coefficient
+algebras retain their separate componentwise precision model. Exact
+rational algebra and numerical balls are distinct layers.
+
+For :doc:`calculus`, the formal prefix length, coefficient ball precision,
+argument precision and analytic coefficient-tail bound are separate data.
+Primitives divide degree-k coefficients by k+1, losing e*v_p(k+1) digits
+when coefficients have finite precision. Exact rational data stays exact.
+A supplied infinite-tail bound is a premise about every omitted coefficient,
+not a conclusion inferred from observed prefix values.

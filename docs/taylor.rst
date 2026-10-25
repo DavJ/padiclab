@@ -102,3 +102,8 @@ there is no convergence restriction. If none are omitted,
 
 The analytic domains follow the sources in :doc:`references`; the explicit
 inequalities above state the numerical contracts used by this implementation.
+
+Use :doc:`calculus` to retain an analytic series as an object, differentiate
+it repeatedly or construct a normalized local primitive. Its coefficient
+bounds survive those operations; a numerical Taylor error bound alone does
+not supply the required bounds for differentiated or integrated tails.

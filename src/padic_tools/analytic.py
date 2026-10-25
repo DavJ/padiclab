@@ -128,6 +128,7 @@ def _log_tail_bound(start, v, p, e):
 
     Between p-powers this expression increases. Inspect the first interval
     and the following p-powers until their successive minima increase.
+    The positive slope v may be rational, as in analytic-series primitives.
     """
     j = _floor_log(start, p)
     bound = start*v-e*j
