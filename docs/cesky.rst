@@ -320,6 +320,8 @@ přijímá známý prefix a povinné ``tail_bound=(A,B)``: pro každý vynechan�
 koeficient a_n se předpokládá ``v_pi(a_n)>=A+B*n``. Uživatelskou mez
 nelze odvodit jen z konečného prefixu. Výsledek zahrnuje všechny řady,
 které tuto podmínku splňují; neznámý ocas se nedoplňuje přesnými nulami.
+U logaritmických řad zůstávají koeficienty kladného stupně přesné díky
+přesnému středu. Derivace tak může odstranit nejistotu konstantního členu.
 
 ``radius=r`` znamená celou kouli ``v_pi(x-center)>=r``. Pro nekonečný
 ocas musí platit r+B>0. Výchozí přesnost vyčíslení se omezí dostupnými

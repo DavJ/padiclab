@@ -113,6 +113,8 @@ jobs:
               assert series.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
               family = AnalyticSeries(K, [1], radius=1, tail_bound=(0,0), precision=18)
               assert family(K.p).precision == getattr(K, 'ramification_index', 1)
+              local_log = AnalyticSeries.from_function(log, K, center=K.p, order=20, precision=9)
+              assert local_log.derivative()(K.p, precision=60).contains(exact(1)/K.p)
           PY
       - uses: actions/upload-artifact@v4
         with:
