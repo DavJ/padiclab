@@ -20,7 +20,10 @@ With B_1=-1/2, the moments are
 
 .. math::
 
-   I_p(x^n)=B_n,\qquad I_p\left(\sum c_nx^n\right)=\sum c_nB_n.
+   \begin{aligned}
+   I_p(x^n)&=B_n,\\
+   I_p\left(\sum c_nx^n\right)&=\sum c_nB_n.
+   \end{aligned}
 
 The result is independent of p for rational polynomials. The finite
 power-sum identity in `DLMF 24.4.7 <https://dlmf.nist.gov/24.4.E7>`_
@@ -83,8 +86,12 @@ and therefore s+B>0. Every omitted integrated term has valuation at least
 
 .. math::
 
-   v_\pi\bigl(a_n I_p((d+bt)^n)\bigr)\geq A+(B+s)n-e,
-   \qquad d=\mathrm{shift}-\mathrm{center},\quad v_\pi(p)=e.
+   \begin{aligned}
+   &v_\pi\bigl(a_n I_p((d+bt)^n)\bigr)\\
+   &\quad\geq A+(B+s)n-e,\\
+   &d=\mathrm{shift}-\mathrm{center},\\
+   &v_\pi(p)=e.
+   \end{aligned}
 
 The entire integrated tail is consequently contained in
 
