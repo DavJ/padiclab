@@ -191,9 +191,12 @@ denominator spike. Since v_p(k)<=floor(log_p(k)), all k>=m+1 satisfy
 
 .. math::
 
-   v_\pi(b_k)\geq A-B+Bk-e\lfloor\log_p k\rfloor
-      \geq A'+B'k,\qquad
-   A'=A-B+T(m+1,\delta),\quad B'=B-\delta.
+   \begin{aligned}
+      v_\pi(b_k)&\geq A-B+Bk-e\lfloor\log_p k\rfloor\\
+                &\geq A'+B'k,\\
+      A'&=A-B+T(m+1,\delta),\\
+      B'&=B-\delta.
+   \end{aligned}
 
 The new gap r+B'=(r+B)/2 is positive, so the same declared disc remains
 valid. This is a conservative certificate; repeated integration can weaken
