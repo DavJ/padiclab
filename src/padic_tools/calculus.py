@@ -266,8 +266,9 @@ class AnalyticSeries:
         """Certified series for exp, sin, cos, log1p or log (default log(p)=0).
 
         Exact centers only. The standard rational centers retain exact
-        coefficients; other centers use Taylor coefficient balls with guard
-        digits. Logarithms require a principal displacement disc. A finite
+        coefficients; exponential/trigonometric centers use Taylor balls
+        with guard digits. Logarithmic coefficients of positive degree stay
+        exact. Logarithms require a principal displacement disc. A finite
         prefix can yield less than the desired default output precision.
         """
         from .taylor import taylor
@@ -309,6 +310,17 @@ class AnalyticSeries:
         elif function is analytic.log and _exact_zero(
                 field, _add(field, c, _coefficient(field, -1))):
             coefficients = taylor(function, 1, order=order).coefficients
+        elif function in (analytic.log, analytic.log1p):
+            # The exact center makes 1/(n*scale**n) exact. Only log(center)
+            # needs a numerical ball; derivatives must not inherit an
+            # artificial rounding of the center into all these coefficients.
+            inverse = (1/scale if isinstance(field, PadicField) else
+                       analytic._pair_power(field, scale, -1))
+            power = inverse
+            coefficients = [function(field(c, absprec=work))]
+            for n in range(1, order):
+                coefficients.append(_scale(field, power, Fraction((-1)**(n+1), n)))
+                power = _multiply(field, power, inverse)
         else:
             coefficients = taylor(function, field(c, absprec=work), order=order).coefficients
         return cls(field, coefficients, center=c, radius=r, tail_bound=bound, precision=target)

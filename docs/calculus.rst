@@ -48,10 +48,12 @@ Analytic function factories
 ---------------------------
 
 The factory's exact centers at zero (or at one for log) produce exact
-rational Taylor coefficients. Other centers use local Taylor coefficient
-balls with guard digits. These balls contain the true coefficients at the
-specified exact center; their uncertainty is retained during calculus.
-The logarithm uses the default log(p)=0 branch.
+rational Taylor coefficients. Other exponential/trigonometric centers use
+local Taylor coefficient balls with guard digits; their uncertainty is
+retained during calculus. Logarithmic coefficients of positive degree are
+exact reciprocal powers of the exact scale, divided by the degree. Only
+the logarithmic constant value needs a ball. Differentiation can therefore
+remove that uncertainty. The logarithm uses the default log(p)=0 branch.
 
 .. doctest::
 
@@ -74,6 +76,9 @@ The logarithm uses the default log(p)=0 branch.
    True
    >>> expected = (1+pi)*log1p(pi)-pi
    >>> logarithm.antiderivative()(pi, precision=21).is_congruent(expected, 21)
+   True
+   >>> local_log = AnalyticSeries.from_function(log, K, center=3, order=20, precision=9)
+   >>> local_log.derivative()(3, precision=60).contains(Fraction(1, 3))
    True
 
 ``radius`` is a uniformizer exponent: r means v_pi(x-center)>=r.
@@ -226,8 +231,9 @@ Its prefix alone does not imply a convergent AnalyticSeries. Supply a proven
 tail bound when transferring a custom prefix.
 
 This layer is univariate and uses commutative local fields. General series
-inversion/composition, multivariate differential calculus, a public
-Volkenborn integrator and ODE solvers remain subsequent work. Local
+inversion/composition, multivariate differential calculus and ODE solvers
+remain subsequent work. The :doc:`volkenborn` integrator now accepts
+polynomials and these bounded analytic families. Local
 primitives and measure integrals have different contracts. General p-adic
 functions can have derivative zero without being constant; their global
 integration theory cannot be inferred from this analytic-disc construction.

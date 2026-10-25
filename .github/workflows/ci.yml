@@ -66,7 +66,8 @@ jobs:
           /tmp/padic-wheel-check/bin/python - <<'PY'
           from padic_tools import Qp, Q2i, UnramifiedQuadraticField, zeta_p
           from padic_tools import Biquaternions, CliffordAlgebra, Gaussian, GaussianLocalPlace, QuaternionBridge
-          from padic_tools import Matrix, exact, exp, log, power, taylor, AnalyticSeries
+          from padic_tools import Matrix, Polynomial, exact, exp, log, power, taylor, AnalyticSeries
+          from padic_tools import volkenborn_integral
           assert zeta_p(-3,Qp(5)).is_congruent("-31/30")
           L = UnramifiedQuadraticField(Qp(3),[1,0,1])
           x = L(1,2)
@@ -113,6 +114,11 @@ jobs:
               assert series.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
               family = AnalyticSeries(K, [1], radius=1, tail_bound=(0,0), precision=18)
               assert family(K.p).precision == getattr(K, 'ramification_index', 1)
+              local_log = AnalyticSeries.from_function(log, K, center=K.p, order=20, precision=9)
+              assert local_log.derivative()(K.p, precision=60).contains(exact(1)/K.p)
+              z = K(K.p**2, absprec=40)
+              assert volkenborn_integral(series, scale=K.p**2, precision=21).is_congruent(z/(exp(z)-1), 21)
+          assert volkenborn_integral(Polynomial([0, 1])) == -exact(1)/2
           PY
       - uses: actions/upload-artifact@v4
         with:

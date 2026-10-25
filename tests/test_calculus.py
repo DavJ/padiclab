@@ -318,3 +318,24 @@ def test_genuinely_quadratic_centers_and_shallow_logarithms(K):
     point = image(2*matrix(K, c))
     r = S.from_function(log1p, K, center=c, order=96, precision=21)
     assert r(point, precision=21).is_congruent(log1p(K(point, absprec=30)), 21)
+
+
+@pytest.mark.parametrize('K', FIELDS)
+@pytest.mark.parametrize('function', [log, log1p])
+def test_logarithmic_derivatives_retain_exact_center_source_information(K, function):
+    center = pi_power(K, 1)
+    r = S.from_function(function, K, center=center, order=20, precision=9)
+    C = matrix(K, center)
+    scale = C if function is log else sp.eye(C.rows)+C
+    # The value at the center is still a finite ball, but every positive
+    # degree coefficient is exact source data, even in a quadratic field.
+    assert hasattr(r[0], 'precision')
+    assert all(not hasattr(a, 'precision') for a in r.coefficients[1:])
+    for d in (1, 2, 5):
+        t = sp.Symbol('t')
+        derivative = sp.diff(sp.log(t), t, d)
+        numerator, denominator = sp.fraction(derivative)
+        expected = polynomial_value(numerator, scale)*polynomial_value(denominator, scale).inv()
+        assert r.derivative(d)(center, precision=60).contains(image(expected))
+    with pytest.raises(PrecisionError):
+        r(center, precision=60)

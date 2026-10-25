@@ -41,6 +41,7 @@ assert z.is_congruent(Fraction(-31, 30))
 | Transforms | Exact atomic and bounded rational Amice measures, moments/polynomial integration, unit restriction, certified branched Mellin, local Laplace, Amice evaluation and additive convolution |
 | Taylor | Exact polynomial shifts and rational jets; local p-adic exp/log/log1p/sin/cos and polynomial expansions with whole-tail enclosures |
 | Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, explicit domains and tail bounds, derivatives of arbitrary order and normalized local primitives |
+| Volkenborn integration | Exact polynomial/Bernoulli moments and certified analytic-series integrals, explicit affine charts and extension-valued coefficients |
 | Harmonic analysis | Exact additive characters, real Haar integration, finite Fourier transforms, compactly supported test functions, inversion, Parseval and convolution |
 | Wavelets and operators | Exact finite Kozyrev bases and reconstruction, whole-Qp integer-order Vladimirov images with analytic tails, conservative ball generators and numerical diffusion |
 | Algebraic bridges | Q and Q[i] to independent completions; chosen split, unramified and ramified local-field images; rational quaternions and biquaternions |
@@ -164,6 +165,21 @@ uncertainty. A custom prefix needs an explicit coefficient-tail premise.
 See [local calculus](docs/calculus.rst) and run
 `python examples/local_calculus.py`. Local primitives, Haar integration and
 integration against p-adic measures have separate APIs and meanings.
+
+## Volkenborn integration
+
+```python
+from fractions import Fraction
+from padic_tools import Polynomial, volkenborn_integral
+
+x = Polynomial([0, 1])
+assert volkenborn_integral(x) == Fraction(-1, 2)
+assert volkenborn_integral(x*x) == Fraction(1, 6)
+```
+
+The integrator also accepts `AnalyticSeries` with explicit affine parameters
+and a proof-backed whole-tail bound. See [Volkenborn integration](docs/volkenborn.rst)
+for domains, finite precision and the distinction from Haar integration.
 
 ## Matrices and certified linear systems
 

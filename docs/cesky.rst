@@ -320,6 +320,8 @@ přijímá známý prefix a povinné ``tail_bound=(A,B)``: pro každý vynechan�
 koeficient a_n se předpokládá ``v_pi(a_n)>=A+B*n``. Uživatelskou mez
 nelze odvodit jen z konečného prefixu. Výsledek zahrnuje všechny řady,
 které tuto podmínku splňují; neznámý ocas se nedoplňuje přesnými nulami.
+U logaritmických řad zůstávají koeficienty kladného stupně přesné díky
+přesnému středu. Derivace tak může odstranit nejistotu konstantního členu.
 
 ``radius=r`` znamená celou kouli ``v_pi(x-center)>=r``. Pro nekonečný
 ocas musí platit r+B>0. Výchozí přesnost vyčíslení se omezí dostupnými
@@ -339,10 +341,42 @@ Primitivní funkce dělí koeficient číslem n+1. Každá mocnina p v tomto
 jmenovateli ubere e číslic uniformizátoru; mez ocasu proto zahrnuje i
 všechny pozdější zhoršené členy. Primitivní funkce má zadanou hodnotu ve
 středu. Integrace vůči Haarově či p-adické míře má samostatné API a jiný
-význam. Veřejný Volkenbornův integrál, diferenciální rovnice a derivace
-ve více proměnných zůstávají navazujícími kroky. Odvození, obory i další
+význam. Diferenciální rovnice a derivace ve více proměnných zůstávají
+navazujícími kroky; Volkenbornův integrál je popsaný níže. Odvození, obory i další
 příklady jsou v :doc:`kapitole o lokálním počtu <calculus>`;
 spustit lze ``python examples/local_calculus.py``.
+
+Volkenbornův integrál
+---------------------
+
+``volkenborn_integral`` počítá p-adickou limitu normalizovaných součtů
+hodnot v bodech 0,...,p**N-1. Pro polynomy nad Q dává přesný zlomek:
+integrál x**n je Bernoulliho číslo B_n s konvencí B_1=-1/2. S výstupním
+polem vrací kouli; přijímá také ``AnalyticSeries`` a uchovává nejistotu
+koeficientů, parametrů i celého vynechaného ocasu.
+
+.. doctest::
+
+   >>> x = Polynomial([0, 1])
+   >>> volkenborn_integral(x)
+   Fraction(-1, 2)
+   >>> volkenborn_integral(x*x)
+   Fraction(1, 6)
+   >>> volkenborn_integral(x, shift=1)
+   Fraction(1, 2)
+   >>> L = Q2i(3)
+   >>> rada = AnalyticSeries.from_function(exp, L, order=100, precision=21)
+   >>> z = L(4, 4, absprec=40)
+   >>> volkenborn_integral(rada, scale=(4, 4), precision=21).is_congruent(z/(exp(z)-1), 21)
+   True
+
+``shift=a, scale=b`` znamená integrál f(a+b*t) v parametru t ze Zp.
+Nevkládá se žádný objemový faktor. Celá parametrizace musí ležet v
+deklarovaném oboru řady. Změna parametrizace může změnit výsledek, i když
+oba obrazy tvoří stejnou kouli: Volkenbornův funkcionál není translačně
+invariantní Haarův integrál. V rozšíření nad Qp je parametrem stále Zp,
+nikoliv celý okruh rozšíření. Definici, odvození zbytku a nezávislé kontroly
+najdeš v :doc:`kapitole o Volkenbornově integraci <volkenborn>`.
 
 Jak funguje bridge
 ------------------
