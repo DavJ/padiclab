@@ -288,6 +288,62 @@ zůstávají dalším vývojem. Odvození mezí, nezávislé testy a další př
 jsou v :doc:`kapitole o kvadratické analýze <extension_analytic>` a ve
 spustitelném příkladu ``examples/quadratic_analysis.py``.
 
+Diferenciální a integrální počet
+--------------------------------
+
+``AnalyticSeries`` uchovává analytickou řadu nad Qp nebo ověřeným
+kvadratickým polem, její přesný střed, definiční kouli a mez všech
+vynechaných koeficientů. Podporuje derivace libovolného nezáporného celého
+řádu, lokální primitivní funkce, sčítání a násobení. Přesné koeficienty
+zůstávají přesné, konečné koeficientové koule si zachovávají nejistotu.
+
+.. doctest::
+
+   >>> K = Qp(3, 3)
+   >>> f = AnalyticSeries.from_polynomial(K, Polynomial([1, 2, 3]), center=2, precision=18)
+   >>> f.derivative()(5).contains(32)
+   True
+   >>> f.antiderivative(constant=7)(2).contains(7)
+   True
+   >>> L = Q2i(3)
+   >>> rada = AnalyticSeries.from_function(exp, L, order=48, precision=21)
+   >>> x = L(4, 4, absprec=25)
+   >>> rada.derivative(2)(x, precision=21).is_congruent(exp(x), 21)
+   True
+   >>> rada.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
+   True
+
+``from_function`` má doložené meze pro exp, sin, cos, log1p a log;
+logaritmus používá větev log(p)=0. ``from_polynomial`` převádí konečný
+polynom v původní proměnné x na rozvoj v x-center. Samotný konstruktor
+přijímá známý prefix a povinné ``tail_bound=(A,B)``: pro každý vynechaný
+koeficient a_n se předpokládá ``v_pi(a_n)>=A+B*n``. Uživatelskou mez
+nelze odvodit jen z konečného prefixu. Výsledek zahrnuje všechny řady,
+které tuto podmínku splňují; neznámý ocas se nedoplňuje přesnými nulami.
+
+``radius=r`` znamená celou kouli ``v_pi(x-center)>=r``. Pro nekonečný
+ocas musí platit r+B>0. Výchozí přesnost vyčíslení se omezí dostupnými
+koeficienty, vstupem a celým zbytkem řady. Výslovný požadavek na vyšší
+nepodloženou přesnost vyvolá ``PrecisionError``.
+
+.. doctest::
+
+   >>> kratka = AnalyticSeries(K, [1], radius=1, tail_bound=(0, 0), precision=18)
+   >>> kratka(3).precision
+   1
+   >>> nejista = AnalyticSeries.from_polynomial(L, [0, L(1, absprec=9)])
+   >>> nejista.antiderivative()[2].precision
+   7
+
+Primitivní funkce dělí koeficient číslem n+1. Každá mocnina p v tomto
+jmenovateli ubere e číslic uniformizátoru; mez ocasu proto zahrnuje i
+všechny pozdější zhoršené členy. Primitivní funkce má zadanou hodnotu ve
+středu. Integrace vůči Haarově či p-adické míře má samostatné API a jiný
+význam. Veřejný Volkenbornův integrál, diferenciální rovnice a derivace
+ve více proměnných zůstávají navazujícími kroky. Odvození, obory i další
+příklady jsou v :doc:`kapitole o lokálním počtu <calculus>`;
+spustit lze ``python examples/local_calculus.py``.
+
 Jak funguje bridge
 ------------------
 

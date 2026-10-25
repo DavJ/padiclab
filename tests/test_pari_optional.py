@@ -11,6 +11,70 @@ import pytest
 from padic_tools import AtomicMeasure, BallVladimirov, EisensteinQuadraticField, Gaussian, GaussianLocalPlace, PadicTestFunction, Qp, RationalAmiceMeasure, UnramifiedQuadraticField, exp, finite_fourier, log, taylor, zeta_p
 from padic_tools import Matrix
 from padic_tools import log1p, power
+from padic_tools import AnalyticSeries, sin, cos
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p", [2, 3, 5])
+@pytest.mark.parametrize("function", [exp, sin, cos, log1p, log])
+def test_analytic_series_calculus_against_pari_at_translated_centers(p, function):
+    formulas = {
+        exp: ("exp(x)", "exp(x)", "exp(x)", "exp(x)-exp(a)"),
+        sin: ("sin(x)", "cos(x)", "-sin(x)", "cos(a)-cos(x)"),
+        cos: ("cos(x)", "-sin(x)", "-cos(x)", "sin(x)-sin(a)"),
+        log1p: ("log(1+x)", "1/(1+x)", "-1/(1+x)^2",
+                "(1+x)*log(1+x)-x-((1+a)*log(1+a)-a)"),
+        log: ("log(x)", "1/x", "-1/x^2", "x*log(x)-x-(a*log(a)-a)"),
+    }
+    script = f"p={p};a=p^2+O(p^45);x=a+p^3;\n"
+    script += "".join(f"print(lift({f}));\n" for f in formulas[function])+"quit\n"
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 4
+    series = AnalyticSeries.from_function(function, Qp(p, 3), center=p*p,
+                                          order=100, precision=24)
+    values = [series, series.derivative(), series.derivative(2), series.antiderivative()]
+    for model, reference in zip(values, oracle):
+        assert model(p*p+p**3, precision=18).contains(reference)
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p,sign", [(2, -1), (2, 1), (3, -1), (3, 1)])
+def test_quadratic_series_calculus_against_pari_gaussian_identities(p, sign):
+    # Independent scalar Qp identities, not generic exp/log on a POLMOD.
+    script = (
+        f"p={p};a=p^2+O(p^45);b=2*p^2+O(p^45);x=a+p^3;y=b+p^3;\n"
+        "emit(a,b)={print(lift(a));print(lift(b))};\n"
+        "lg(a,b)=[log((1+a)^2+b^2)/2,sum(k=0,99,(-1)^k*(b/(1+a))^(2*k+1)/(2*k+1))];\n"
+        "E=exp(x)*cos(y);F=exp(x)*sin(y);emit(E,F);\n"
+        "emit(E-exp(a)*cos(b),F-exp(a)*sin(b));\n"
+        "v=lg(x,y);w=lg(a,b);emit(v[1],v[2]);\n"
+        "D=(1+x)^2+y^2;emit((1+x)/D,-y/D);\n"
+        "emit((y^2-(1+x)^2)/D^2,2*(1+x)*y/D^2);\n"
+        "emit((1+x)*v[1]-y*v[2]-x-((1+a)*w[1]-b*w[2]-a),"
+        "(1+x)*v[2]+y*v[1]-y-((1+a)*w[2]+b*w[1]-b));quit\n"
+    )
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 12
+    pairs = [(a-sign*b, sign*b) if p == 2 else (a, sign*b)
+             for a, b in zip(oracle[::2], oracle[1::2])]
+    K = GaussianLocalPlace(Qp(p, 3), root_sign=sign).field
+    def coordinates(a, b):
+        return (a-sign*b, sign*b) if p == 2 else (a, sign*b)
+    center, point = coordinates(p*p, 2*p*p), coordinates(p*p+p**3, 2*p*p+p**3)
+    exponential = AnalyticSeries.from_function(exp, K, center=center, order=100, precision=25)
+    logarithm = AnalyticSeries.from_function(log1p, K, center=center, order=100, precision=25)
+    for d in (0, 1, 2):
+        assert exponential.derivative(d)(point, precision=21).contains(pairs[0])
+    assert exponential.antiderivative()(point, precision=21).contains(pairs[1])
+    for d in (0, 1, 2):
+        assert logarithm.derivative(d)(point, precision=21).contains(pairs[2+d])
+    assert logarithm.antiderivative()(point, precision=21).contains(pairs[5])
 
 
 @pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")

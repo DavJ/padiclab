@@ -49,6 +49,12 @@ Measures and transforms
 .. automodule:: padic_tools.measures
    :members:
 
+Analytic series and local calculus
+----------------------------------
+
+.. automodule:: padic_tools.calculus
+   :members:
+
 Taylor expansions
 ------------------
 

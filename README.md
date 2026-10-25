@@ -40,6 +40,7 @@ assert z.is_congruent(Fraction(-31, 30))
 | Symbolic | Rational polynomials, Euclidean division/gcd, formal series, composition/calculus, optional SymPy function nodes/evaluation |
 | Transforms | Exact atomic and bounded rational Amice measures, moments/polynomial integration, unit restriction, certified branched Mellin, local Laplace, Amice evaluation and additive convolution |
 | Taylor | Exact polynomial shifts and rational jets; local p-adic exp/log/log1p/sin/cos and polynomial expansions with whole-tail enclosures |
+| Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, explicit domains and tail bounds, derivatives of arbitrary order and normalized local primitives |
 | Harmonic analysis | Exact additive characters, real Haar integration, finite Fourier transforms, compactly supported test functions, inversion, Parseval and convolution |
 | Wavelets and operators | Exact finite Kozyrev bases and reconstruction, whole-Qp integer-order Vladimirov images with analytic tails, conservative ball generators and numerical diffusion |
 | Algebraic bridges | Q and Q[i] to independent completions; chosen split, unramified and ramified local-field images; rational quaternions and biquaternions |
@@ -143,6 +144,26 @@ denominator spikes are included in the output ball. See
 [quadratic analysis](docs/extension_analytic.rst) for the full proof and
 precision contracts. Extension sqrt/Teichmueller lifts and theta/zeta
 evaluation in extension fields remain future work.
+
+## Differential and integral calculus
+
+```python
+from padic_tools import AnalyticSeries, Q2i, exp
+
+L = Q2i(precision=3)
+s = AnalyticSeries.from_function(exp, L, order=48, precision=21)
+x = L(4, 4, absprec=25)
+assert s.derivative(2)(x, precision=21).is_congruent(exp(x), 21)
+assert s.antiderivative()(x, precision=21).is_congruent(exp(x)-1, 21)
+```
+
+The series retains bounds for every omitted coefficient. Derivatives and
+primitives transform those bounds, including all later p-power denominator
+spikes. Exact coefficients remain exact; finite balls preserve their
+uncertainty. A custom prefix needs an explicit coefficient-tail premise.
+See [local calculus](docs/calculus.rst) and run
+`python examples/local_calculus.py`. Local primitives, Haar integration and
+integration against p-adic measures have separate APIs and meanings.
 
 ## Matrices and certified linear systems
 
