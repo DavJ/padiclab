@@ -18,6 +18,7 @@ from .ramified import (
 from .transforms import AtomicMeasure
 from .measures import RationalAmiceMeasure
 from .taylor import TaylorExpansion, taylor
+from .calculus import AnalyticSeries
 from .harmonic import (
     CyclotomicValue, PadicTestFunction, additive_character, additive_phase,
     finite_fourier, haar_volume,
@@ -42,6 +43,7 @@ __all__ = [
     "EisensteinQuadraticField", "EisensteinQuadraticElement", "Q2i",
     "PrimeResidueField", "PrimeResidueElement",
     "AtomicMeasure", "RationalAmiceMeasure", "TaylorExpansion", "taylor",
+    "AnalyticSeries",
     "CyclotomicValue", "PadicTestFunction", "additive_character", "additive_phase",
     "finite_fourier", "haar_volume",
     "KozyrevBasis", "kozyrev_wavelet", "BallVladimirov", "DiffusionState",
