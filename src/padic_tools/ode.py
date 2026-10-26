@@ -11,14 +11,20 @@ from .calculus import (
 from .core import DomainError, PadicField
 
 
-def _rate(a, b):
-    """Find L with v(a_j)>=L*(j+1), and L<=b's infinite-tail slope."""
+def _multiplier_rates(a):
+    """All constraints on L with v(a_j)>=L*(j+1); exact zeros impose none."""
     candidates = [Fraction(_v(a.field, c), j+1)
                   for j, c in enumerate(a.coefficients)
                   if not _exact_zero(a.field, c)]
     if a.tail_bound is not None:
         A, B = a.tail_bound
         candidates.extend((B, (A+B*a.order)/(a.order+1)))
+    return candidates
+
+
+def _rate(a, b):
+    """Find L with v(a_j)>=L*(j+1), and L<=b's infinite-tail slope."""
+    candidates = _multiplier_rates(a)
     if b.tail_bound is not None:
         candidates.append(b.tail_bound[1])
     return min(candidates, default=Fraction(0))

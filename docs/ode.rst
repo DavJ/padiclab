@@ -181,7 +181,8 @@ trigger either exact-zero argument.
    True
 
 This API handles scalar first-order linear equations at ordinary points.
-Systems, nonlinear equations, singular points, analytic continuation and
+The :doc:`ode_system` API handles coupled linear systems and matrix initial
+data. Nonlinear equations, singular points, analytic continuation and
 optimal differential/lattice precision remain subsequent work. Complexity
 is quadratic in the prefix length; no fast Newton solver is claimed.
 

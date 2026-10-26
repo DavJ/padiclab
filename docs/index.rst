@@ -56,6 +56,7 @@ across packages: the prime, branch and Euler factor must match.
    Analytic series and calculus <calculus>
    Volkenborn integration <volkenborn>
    Local linear ODEs <ode>
+   Linear differential systems <ode_system>
    Symbolic algebra <symbolic>
    Algebraic bridges <bridges>
    Chosen local places <local_bridges>

@@ -29,6 +29,8 @@ Architecture and contribution guide
      - Exact polynomial moments, affine charts and certified analytic Volkenborn integrals
    * - ``ode``
      - Local first-order linear equations, coefficient families and factorial-majorant solution tails
+   * - ``ode_system``
+     - Coupled matrix equations, fundamental solutions, uncertain data and a uniform solution majorant
    * - ``harmonic``
      - Complex-place additive characters, real Haar integration and exact finite Fourier transforms
    * - ``wavelets``, ``operators``

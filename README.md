@@ -42,7 +42,7 @@ assert z.is_congruent(Fraction(-31, 30))
 | Taylor | Exact polynomial shifts and rational jets; local p-adic exp/log/log1p/sin/cos and polynomial expansions with whole-tail enclosures |
 | Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, explicit domains and tail bounds, derivatives of arbitrary order and normalized local primitives |
 | Volkenborn integration | Exact polynomial/Bernoulli moments and certified analytic-series integrals, explicit affine charts and extension-valued coefficients |
-| Local ODEs | First-order linear equations with variable analytic coefficients over Qp/quadratic fields, ball initial data and whole-solution tail certificates |
+| Local ODEs | Scalar and coupled linear equations with noncommuting analytic coefficient matrices over Qp/quadratic fields, vector/matrix initial data and whole-solution tail certificates |
 | Harmonic analysis | Exact additive characters, real Haar integration, finite Fourier transforms, compactly supported test functions, inversion, Parseval and convolution |
 | Wavelets and operators | Exact finite Kozyrev bases and reconstruction, whole-Qp integer-order Vladimirov images with analytic tails, conservative ball generators and numerical diffusion |
 | Algebraic bridges | Q and Q[i] to independent completions; chosen split, unramified and ramified local-field images; rational quaternions and biquaternions |
@@ -199,6 +199,19 @@ the same API. The returned `AnalyticSeries` includes a sufficient convergence
 disc and a bound for every omitted solution coefficient. See
 [local linear ODEs](docs/ode.rst) for the proof and scope, and run
 `python examples/linear_ode.py`.
+
+For coupled equations and fundamental matrices:
+
+```python
+from padic_tools import Matrix, exact, solve_linear_system
+
+phi = solve_linear_system([[0, 1], [-1, 0]], Matrix.identity(exact, 2),
+                          field=K, order=64)
+assert phi(0, precision=60).contains([[1, 0], [0, 1]])
+```
+
+See [linear differential systems](docs/ode_system.rst) for variable
+coefficients, forcing, the matrix majorant proof and examples.
 
 ## Matrices and certified linear systems
 

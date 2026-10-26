@@ -13,6 +13,52 @@ from padic_tools import Matrix
 from padic_tools import log1p, power
 from padic_tools import AnalyticSeries, sin, cos
 from padic_tools import solve_linear_ode
+from padic_tools import solve_linear_system, exact
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p", [2, 3, 5])
+def test_noncommuting_airy_system_against_pari_closed_maclaurin_sums(p):
+    # Normalized Airy solutions, using DLMF 9.4 rational Maclaurin products.
+    # The first omitted degrees are >=122, of valuation >100 on this chart.
+    script = (f"p={p};h=p^2+O(p^60);\n"
+              "u=sum(k=0,40,prod(j=0,k-1,3*j+1)*h^(3*k)/(3*k)!);\n"
+              "v=sum(k=0,40,prod(j=0,k-1,3*j+2)*h^(3*k+1)/(3*k+1)!);\n"
+              "du=sum(k=1,40,prod(j=0,k-1,3*j+1)*h^(3*k-1)/(3*k-1)!);\n"
+              "dv=sum(k=0,40,prod(j=0,k-1,3*j+2)*h^(3*k)/(3*k)!);\n"
+              "print(lift(u));print(lift(v));print(lift(du));print(lift(dv));quit\n")
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 4
+    K = Qp(p, 3)
+    h = AnalyticSeries(K, [0, 1], tail_bound=None)
+    y = solve_linear_system([[0, 1], [h, 0]], Matrix.identity(exact, 2), order=80)
+    assert y(p*p, precision=21).contains([oracle[:2], oracle[2:]])
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p,sign", [(2, -1), (2, 1), (3, -1), (3, 1)])
+def test_gaussian_coupled_system_against_pari_scalar_trigonometric_identities(p, sign):
+    # Frequency g=p+i. Scalar p-adic identities give cos(g*h), sin(g*h).
+    script = (f"p={p};a=p^2+O(p^60);b=2*p^2+O(p^60);u=p*a-b;v=p*b+a;\n"
+              "C=(exp(v)+exp(-v))/2;D=(exp(v)-exp(-v))/2;\n"
+              "print(lift(cos(u)*C));print(lift(-sin(u)*D));\n"
+              "print(lift(sin(u)*C));print(lift(cos(u)*D));quit\n")
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 4
+    def coordinates(a, b):
+        return (a-sign*b, sign*b) if p == 2 else (a, sign*b)
+    K = GaussianLocalPlace(Qp(p, 3), root_sign=sign).field
+    g, minus_g = coordinates(p, 1), coordinates(-p, -1)
+    y = solve_linear_system([[0, g], [minus_g, 0]], Matrix.identity(exact, 2), field=K, order=80)
+    C, S = coordinates(*oracle[:2]), coordinates(*oracle[2:])
+    minus_S = tuple(-v for v in S)
+    assert y(coordinates(p*p, 2*p*p), precision=21).contains([[C, S], [minus_S, C]])
 
 
 @pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")

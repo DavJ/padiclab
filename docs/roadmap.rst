@@ -44,6 +44,8 @@ Implemented
 * Scalar first-order linear ODEs with variable analytic coefficients over Qp
   and both quadratic fields, exact/ball initial data, automatic sufficient
   convergence discs and factorial-majorant solution tail bounds.
+* Coupled linear ODE systems with noncommuting variable coefficient matrices,
+  vector/matrix initial data, fundamental solutions and a uniform tail majorant.
 * Rational/Gaussian diagonal bridges, selected split places, quaternion and
   biquaternion scalar base changes, and an explicit even-Clifford isomorphism.
 * Chosen Gaussian local-field embeddings at all primes, with absolute
@@ -64,7 +66,7 @@ Implemented
 Next mathematical features
 --------------------------
 
-The next calculus steps are linear ODE systems, nonlinear equations and
+The next calculus steps are nonlinear ODEs, singular systems and
 multivariate derivatives. General analytic-series inversion/composition and sharper
 repeated-primitive bounds also remain future work.
 
