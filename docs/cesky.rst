@@ -347,6 +347,29 @@ navazujícími kroky. Odvození, obory i další
 příklady jsou v :doc:`kapitole o lokálním počtu <calculus>`;
 spustit lze ``python examples/local_calculus.py``.
 
+Převrácené a složené analytické řady
+------------------------------------
+
+``f.reciprocal()`` reprezentuje 1/f na doložené kouli, kde konstantní člen
+dominuje všem ostatním. Konečná nejistota i všechny neznámé koeficienty se
+zachovávají. ``f.compose(g)`` skládá řady, pokud přesný konstantní člen g
+odpovídá přesnému středu f. Konečná koule tuto přesnou rovnost nezaručuje.
+
+.. doctest::
+
+   >>> K = Qp(3, 3)
+   >>> inv = AnalyticSeries(K, [1, -1], tail_bound=None).reciprocal(order=48)
+   >>> g = AnalyticSeries(K, [0, 1, 1], tail_bound=None)
+   >>> inv.compose(g)(9, precision=21).contains(Fraction(-1, 89))
+   True
+
+Skládání kontroluje obraz celé vstupní koule a používá pomocnou váhu pro
+mez všech vynechaných výstupních koeficientů. Plně uložené polynomiální
+výsledky mají nulový ocas; kratší prefix zachovává celý doložený zbytek.
+Jde o násobnou převrácenou hodnotu a centrované skládání. Obecný přesun
+středu a inverze vůči skládání zůstávají navazujícími kroky. Odvození
+a příklady jsou v :doc:`kapitole o operacích s řadami <series_ops>`.
+
 Volkenbornův integrál
 ---------------------
 

@@ -54,6 +54,7 @@ across packages: the prime, branch and Euler factor must match.
    Wavelets and diffusion <wavelets>
    Taylor expansions <taylor>
    Analytic series and calculus <calculus>
+   Reciprocals and composition <series_ops>
    Volkenborn integration <volkenborn>
    Local linear ODEs <ode>
    Linear differential systems <ode_system>

@@ -18,6 +18,52 @@ from padic_tools import solve_linear_system, exact
 
 @pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
 @pytest.mark.parametrize("p", [2, 3, 5])
+def test_analytic_reciprocal_composition_against_pari_scalar_formulas(p):
+    script = (f"p={p};x=p^3+O(p^60);w=x+x^2;\n"
+              "print(lift(exp(-x)));print(lift(exp(log(1+x))));print(lift(log(exp(x))));\n"
+              "print(lift(1/(1+w+w^2)));print(lift(-(1+2*w)*(1+2*x)/(1+w+w^2)^2));quit\n")
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 5
+    K = Qp(p, 3)
+    e = AnalyticSeries.from_function(exp, K, order=48, precision=24)
+    l = AnalyticSeries.from_function(log1p, K, order=48, precision=24)
+    lg = AnalyticSeries.from_function(log, K, center=1, order=48, precision=24)
+    rational = AnalyticSeries(K, [1, 1, 1], tail_bound=None).reciprocal(order=48)
+    composed = rational.compose(AnalyticSeries(K, [0, 1, 1], tail_bound=None))
+    models = [e.reciprocal(), e.compose(l), lg.compose(e), composed, composed.derivative()]
+    for model, reference in zip(models, oracle):
+        assert model(p**3, precision=21).contains(reference)
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p,sign", [(2, -1), (2, 1), (3, -1), (3, 1)])
+def test_quadratic_reciprocal_composition_against_pari_gaussian_rational_identities(p, sign):
+    script = (f"p={p};a=p^3+O(p^60);b=2*p^3+O(p^60);\n"
+              "mul(x,y)=[x[1]*y[1]-x[2]*y[2],x[1]*y[2]+x[2]*y[1]];\n"
+              "A=a-2*a*b;B=b+a^2-b^2;d=1-B+A^2-B^2;e=A+2*A*B;\n"
+              "R=[d,-e]/(d^2+e^2);D=mul([-2*A,-1-2*B],mul([1-2*b,2*a],mul(R,R)));\n"
+              "print(lift(R[1]));print(lift(R[2]));print(lift(D[1]));print(lift(D[2]));quit\n")
+    result = subprocess.run(["gp", "-q", "-f"], input=script, text=True,
+                            capture_output=True, check=True, timeout=20)
+    assert not result.stderr, result.stderr
+    oracle = [Fraction(line) for line in result.stdout.splitlines()]
+    assert len(oracle) == 4
+    def coordinates(a, b):
+        return (a-sign*b, sign*b) if p == 2 else (a, sign*b)
+    K = GaussianLocalPlace(Qp(p, 3), root_sign=sign).field
+    i = coordinates(0, 1)
+    f = AnalyticSeries(K, [1, i, 1], tail_bound=None).reciprocal(order=48)
+    g = AnalyticSeries(K, [0, 1, i], tail_bound=None)
+    composed = f.compose(g)
+    for model, expected in zip((composed, composed.derivative()), zip(oracle[::2], oracle[1::2])):
+        assert model(coordinates(p**3, 2*p**3), precision=21).contains(coordinates(*expected))
+
+
+@pytest.mark.skipif(shutil.which("gp") is None, reason="optional PARI/GP executable not installed")
+@pytest.mark.parametrize("p", [2, 3, 5])
 def test_noncommuting_airy_system_against_pari_closed_maclaurin_sums(p):
     # Normalized Airy solutions, using DLMF 9.4 rational Maclaurin products.
     # The first omitted degrees are >=122, of valuation >100 on this chart.

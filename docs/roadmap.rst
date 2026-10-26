@@ -39,6 +39,9 @@ Implemented
 * Analytic coefficient-ball families over Qp and both quadratic fields,
   exact/function factories, explicit closed discs, full coefficient-tail
   bounds, arbitrary-order derivatives, normalized primitives and arithmetic.
+* Analytic multiplicative reciprocals and exactly centered composition over
+  all three local-field engines, with sufficient nonvanishing/image domains,
+  whole-family tail certificates and exact polynomial/constant cases.
 * Volkenborn integration of exact polynomials and certified analytic-series
   families, affine charts, extension-valued coefficients and full-tail bounds.
 * Scalar first-order linear ODEs with variable analytic coefficients over Qp
@@ -67,8 +70,8 @@ Next mathematical features
 --------------------------
 
 The next calculus steps are nonlinear ODEs, singular systems and
-multivariate derivatives. General analytic-series inversion/composition and sharper
-repeated-primitive bounds also remain future work.
+multivariate derivatives. General analytic recentering, compositional
+reversion and sharper repeated-primitive bounds also remain future work.
 
 1. Broader independent Sage/PARI oracle coverage and performance baselines,
    particularly around KL branches and near poles.

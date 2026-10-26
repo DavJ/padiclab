@@ -241,6 +241,31 @@ class AnalyticSeries:
         return type(self)(self.field, self.coefficients, center=self.center, radius=radius,
                           tail_bound=self.tail_bound, precision=self.precision)
 
+    def reciprocal(self, *, order=None, radius=None, precision=None):
+        """Enclose 1/self on a disc with a uniformly dominant constant term.
+
+        A resolved nonzero constant is required. The automatic sufficient
+        disc and the full reciprocal coefficient bound include every input
+        tail coefficient. Constant polynomials retain an exact zero tail.
+        Order counts stored coefficients; precision is a default target.
+        This is multiplicative inversion, not compositional reversion.
+        """
+        from .series_ops import _reciprocal
+        return _reciprocal(self, order=order, radius=radius, precision=precision)
+
+    def compose(self, inner, *, order=None, radius=None, precision=None):
+        """Enclose self(inner(x)) with exact alignment of the two centers.
+
+        The inner constant must equal the outer exact center as exact source
+        data. The returned center is inner.center. A disc-image certificate
+        and auxiliary coefficient majorant bound the whole output tail.
+        Finite polynomial compositions keep zero tails when fully stored.
+        Unknown coefficients and existing finite balls retain uncertainty.
+        Neither compositional reversion nor general recentering is provided.
+        """
+        from .series_ops import _compose
+        return _compose(self, inner, order=order, radius=radius, precision=precision)
+
     @classmethod
     def from_polynomial(cls, field, polynomial, *, center=0, radius=None, precision=None):
         """Expand a finite polynomial f(x) in powers of x-center, with zero tail.
