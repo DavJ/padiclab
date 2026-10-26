@@ -69,6 +69,7 @@ jobs:
           from padic_tools import Matrix, Polynomial, exact, exp, log, power, taylor, AnalyticSeries
           from padic_tools import volkenborn_integral
           from padic_tools import solve_linear_ode
+          from padic_tools import solve_linear_system, cos, sin
           assert zeta_p(-3,Qp(5)).is_congruent("-31/30")
           L = UnramifiedQuadraticField(Qp(3),[1,0,1])
           x = L(1,2)
@@ -123,6 +124,11 @@ jobs:
               y = solve_linear_ode(a, 3, forcing=2, order=64)
               assert y(K.p**2, precision=21).is_congruent(2+exp(-z), 21)
               assert y(0, precision=60).contains(3)
+              phi = solve_linear_system([[0,1],[-1,0]], Matrix.identity(exact,2), field=K, order=48)
+              assert phi(K.p**2, precision=21).is_congruent(Matrix(K,[[cos(z),sin(z)],[-sin(z),cos(z)]]),21)
+              h = AnalyticSeries(K,[0,1],tail_bound=None)
+              airy = solve_linear_system([[0,1],[h,0]], Matrix.identity(exact,2), order=24)
+              assert K(airy[0,0][3]).contains(exact(1)/6)
           assert volkenborn_integral(Polynomial([0, 1])) == -exact(1)/2
           PY
       - uses: actions/upload-artifact@v4

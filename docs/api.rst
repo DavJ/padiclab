@@ -61,6 +61,9 @@ Analytic series and local calculus
 .. automodule:: padic_tools.ode
    :members:
 
+.. automodule:: padic_tools.ode_system
+   :members:
+
 Taylor expansions
 ------------------
 

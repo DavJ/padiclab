@@ -342,7 +342,7 @@ jmenovateli ubere e číslic uniformizátoru; mez ocasu proto zahrnuje i
 všechny pozdější zhoršené členy. Primitivní funkce má zadanou hodnotu ve
 středu. Integrace vůči Haarově či p-adické míře má samostatné API a jiný
 význam. Lineární diferenciální rovnice a Volkenbornův integrál jsou popsané
-níže; soustavy, nelineární rovnice a derivace ve více proměnných zůstávají
+níže; nelineární rovnice a derivace ve více proměnných zůstávají
 navazujícími kroky. Odvození, obory i další
 příklady jsou v :doc:`kapitole o lokálním počtu <calculus>`;
 spustit lze ``python examples/local_calculus.py``.
@@ -406,10 +406,39 @@ Zvýšení ``order`` neobnoví chybějící vstupní číslice.
 
 Pro každé pevné zadání je řešení jediné ve třídě analytických mocninných
 řad ve zvoleném středu. Vrácené koule obsahují všechna přípustná řešení,
-ale kvůli ztrátě korelací i další funkce. Soustavy, nelineární rovnice,
+ale kvůli ztrátě korelací i další funkce. Nelineární rovnice,
 singulární body a optimální přesnost zůstávají dalším krokem. Odvození
 a odkazy jsou v :doc:`kapitole o lokálních rovnicích <ode>`; spustit lze
 ``python examples/linear_ode.py``.
+
+Soustavy diferenciálních rovnic
+-------------------------------
+
+``solve_linear_system`` řeší Y'=A(x)Y+B(x) nad Qp a kvadratickými poli.
+Počáteční hodnota může být vektor nebo ``Matrix`` s více sloupci. Prvky
+A a B mohou být přesné skaláry, konečné koule nebo ``AnalyticSeries`` ve
+společném přesném středu. Volání výsledku vrací matici lokálních koulí;
+``reseni[i,j]`` zpřístupní analytickou řadu jedné složky.
+
+.. doctest::
+
+   >>> K = Qp(3, 3)
+   >>> phi = solve_linear_system([[0, 1], [-1, 0]], Matrix.identity(exact, 2), field=K, order=64)
+   >>> x = K(9, absprec=45)
+   >>> phi(9, precision=21).is_congruent(Matrix(K, [[cos(x), sin(x)], [-sin(x), cos(x)]]), 21)
+   True
+   >>> h = AnalyticSeries(K, [0, 1], tail_bound=None)
+   >>> airy = solve_linear_system([[0, 1], [h, 0]], Matrix.identity(exact, 2), order=64)
+   >>> airy[0, 0][3]
+   Fraction(1, 6)
+
+Rekurence zachovává pořadí maticových součinů, takže koeficienty nemusejí
+komutovat. Společná mez řešení používá minimum valuací všech složek a
+kontroluje celý vynechaný ocas. Konvergence je doložená na dostatečné
+kouli; mez může být konzervativní. Konečná nejistota a neznámé koeficienty
+vstupů zůstávají zachované. Odvození a příklady jsou v
+:doc:`kapitole o soustavách <ode_system>`; spustit lze
+``python examples/linear_system.py``.
 
 Jak funguje bridge
 ------------------
