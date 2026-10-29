@@ -40,7 +40,7 @@ assert z.is_congruent(Fraction(-31, 30))
 | Symbolic | Rational polynomials, Euclidean division/gcd, formal series, composition/calculus, optional SymPy function nodes/evaluation |
 | Transforms | Exact atomic and bounded rational Amice measures, moments/polynomial integration, unit restriction, certified branched Mellin, local Laplace, Amice evaluation and additive convolution |
 | Taylor | Exact polynomial shifts and rational jets; local p-adic exp/log/log1p/sin/cos and polynomial expansions with whole-tail enclosures |
-| Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, explicit domains and tail bounds, derivatives of arbitrary order and normalized local primitives |
+| Calculus | Analytic series over Qp and certified quadratic fields; exact/ball coefficients, full-tail bounds, derivatives/primitives, multiplicative reciprocals and centered composition |
 | Volkenborn integration | Exact polynomial/Bernoulli moments and certified analytic-series integrals, explicit affine charts and extension-valued coefficients |
 | Local ODEs | Scalar and coupled linear equations with noncommuting analytic coefficient matrices over Qp/quadratic fields, vector/matrix initial data and whole-solution tail certificates |
 | Harmonic analysis | Exact additive characters, real Haar integration, finite Fourier transforms, compactly supported test functions, inversion, Parseval and convolution |
@@ -166,6 +166,23 @@ uncertainty. A custom prefix needs an explicit coefficient-tail premise.
 See [local calculus](docs/calculus.rst) and run
 `python examples/local_calculus.py`. Local primitives, Haar integration and
 integration against p-adic measures have separate APIs and meanings.
+
+## Analytic reciprocals and composition
+
+```python
+from fractions import Fraction
+from padic_tools import AnalyticSeries, Qp
+
+K = Qp(3, 3)
+inverse = AnalyticSeries(K, [1, -1], tail_bound=None).reciprocal(order=48)
+inner = AnalyticSeries(K, [0, 1, 1], tail_bound=None)
+assert inverse.compose(inner)(9, precision=21).contains(Fraction(-1, 89))
+```
+
+Reciprocals certify a nonvanishing disc for every allowed denominator.
+Composition checks exact center alignment and the whole disc image, with
+a bound on all omitted output coefficients. See [analytic operations](docs/series_ops.rst)
+and run `python examples/analytic_operations.py`.
 
 ## Volkenborn integration
 

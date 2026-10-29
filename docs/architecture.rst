@@ -25,6 +25,8 @@ Architecture and contribution guide
      - Exact measure data, bounded Amice transforms and certified local expansions
    * - ``calculus``
      - Analytic coefficient-ball families, full-tail bounds, derivatives and local primitives
+   * - ``series_ops``
+     - Reciprocal and centered-composition enclosures, disc-image checks and coefficient majorants
    * - ``volkenborn``
      - Exact polynomial moments, affine charts and certified analytic Volkenborn integrals
    * - ``ode``

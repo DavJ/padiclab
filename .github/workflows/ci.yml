@@ -129,6 +129,9 @@ jobs:
               h = AnalyticSeries(K,[0,1],tail_bound=None)
               airy = solve_linear_system([[0,1],[h,0]], Matrix.identity(exact,2), order=24)
               assert K(airy[0,0][3]).contains(exact(1)/6)
+              inverse = AnalyticSeries(K,[1,-1],tail_bound=None).reciprocal(order=48)
+              inner = AnalyticSeries(K,[0,1,1],tail_bound=None)
+              assert inverse.compose(inner)(K.p**2,precision=21).contains(exact(1)/(1-K.p**2-K.p**4))
           assert volkenborn_integral(Polynomial([0, 1])) == -exact(1)/2
           PY
       - uses: actions/upload-artifact@v4

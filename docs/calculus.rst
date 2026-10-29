@@ -230,9 +230,11 @@ compare `Sage's power-series methods
 Its prefix alone does not imply a convergent AnalyticSeries. Supply a proven
 tail bound when transferring a custom prefix.
 
-This layer is univariate and uses commutative local fields. General series
-inversion/composition, multivariate differential calculus and nonlinear ODEs
-remain subsequent work. The :doc:`ode` solver accepts scalar
+This layer is univariate and uses commutative local fields. The
+:doc:`series_ops` methods provide multiplicative reciprocals and exactly
+centered composition with whole-tail certificates. General recentering,
+compositional reversion, multivariate calculus and nonlinear ODEs remain
+subsequent work. The :doc:`ode` solver accepts scalar
 first-order linear equations with a whole-solution tail certificate;
 :doc:`ode_system` extends this to coupled equations and matrix initial data.
 The :doc:`volkenborn` integrator accepts

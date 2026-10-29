@@ -3,8 +3,8 @@
 Validated on 26 October 2026 with Python 3.12.14. This records the current
 implemented scope; it is not a formal verification or performance benchmark.
 
-- **1020 pytest cases passed**, with no skipped cases in this run. They
-  include **90 independent PARI/GP cases**. GP 2.15.4 was run from a locally
+- **1115 pytest cases passed**, with no skipped cases in this run. They
+  include **97 independent PARI/GP cases**. GP 2.15.4 was run from a locally
   extracted Ubuntu package, whose SHA-256 matched its signed package index.
   CI installs GP explicitly; without it, these optional comparisons skip.
 - Exact oracles cover rational/Qp arithmetic, ideal-ball perturbations,
@@ -54,6 +54,14 @@ implemented scope; it is not a formal verification or performance benchmark.
   The matrix valuation proof extends the scalar factorial majorant without
   assuming commutativity of coefficient matrices. Seven new PARI cases
   compare Airy Maclaurin sums and coupled Gaussian oscillator identities.
+- **88 reciprocal/composition cases** check exact and finite-ball sources,
+  unknown tails, pole-excluding discs, exact center alignment, polynomial
+  and constant special cases, larger-than-unit domains and missing constant
+  data. Independent closed binomial formulas, rational multiplication
+  matrices and whole-family perturbations check stored and omitted terms.
+  Seven further PARI cases compare scalar transcendental identities and
+  genuinely Gaussian rational compositions and derivatives. The written
+  constant-dominance and weighted-composition proofs control entire tails.
 - Four of the PARI cases check Gaussian analytic images in both orientations
   over Q3(i) and Q2(i). They use PARI's scalar p-adic exp/sin/cos, scalar
   log of the norm and a separately truncated arctangent polynomial. This
@@ -70,9 +78,9 @@ implemented scope; it is not a formal verification or performance benchmark.
   checks include exact and whole-ball solves, unresolved pivots,
   determinants, inverses and condition exponents. Measure and harmonic
   tests cover the documented transform, wavelet and diffusion contracts.
-- **612 Sphinx documentation examples passed**. Both HTML builds completed
-  with warnings treated as errors. The portable manual contains **660
-  validated internal anchors and 77 pre-rendered native MathML formulas**.
+- **642 Sphinx documentation examples passed**. Both HTML builds completed
+  with warnings treated as errors. The portable manual contains **673
+  validated internal anchors and 82 pre-rendered native MathML formulas**.
 - Chromium 156 checked both HTML editions offline at **1440x1000 and
   390x844**. The portable edition had JavaScript disabled; English/Czech
   switching, chapter links, visible formulas and absence of page-width
@@ -83,14 +91,15 @@ implemented scope; it is not a formal verification or performance benchmark.
   with the verified source. All CI wheel smoke checks passed in a fresh
   environment with **no optional dependencies**, including both quadratic
   analytic engines, branches, powers, Taylor evaluation, local calculus,
-  public Volkenborn integration, scalar ODEs and coupled differential systems.
+  public Volkenborn integration, scalar ODEs, coupled differential systems
+  and analytic reciprocal/composition evaluation.
 - GitHub Actions for the implementation commit passed all six configured
   jobs: Python **3.10, 3.12 and 3.13**, PARI, documentation and packages.
 
 Reproduce with the commands in README and RELEASING. Examples are
 `python examples/quadratic_analysis.py`, `python examples/local_calculus.py`,
 `python examples/volkenborn.py`, `python examples/linear_ode.py` and
-`python examples/linear_system.py`.
+`python examples/linear_system.py` and `python examples/analytic_operations.py`.
 The precision/branch arguments are in `docs/extension_analytic.rst`; full
 coefficient-tail, derivative and primitive proofs are in `docs/calculus.rst`.
 The uniform normalized-sum argument and integration tail enclosure are in
@@ -99,9 +108,12 @@ The coefficient recurrence, factorial majorant, sufficient ODE convergence
 disc and analytic uniqueness argument are in `docs/ode.rst`.
 The matrix majorant, preserved product order and system contracts are in
 `docs/ode_system.rst`.
+Reciprocal nonvanishing, composition disc images and the auxiliary-weight
+coefficient proof are in `docs/series_ops.rst`.
 
 Public extension square roots/Teichmueller lifts, extension-valued theta
 and zeta, general higher-degree fields, noncommutative analytic functions,
-series inversion/composition, singular systems and nonlinear ODE solvers
+general analytic recentering, compositional reversion, singular systems
+and nonlinear ODE solvers
 remain outside this step. Agreement of algebraic images or special values
 does not establish a complex/p-adic zero correspondence.
