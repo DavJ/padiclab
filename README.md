@@ -11,6 +11,16 @@ documented. The numerical core uses only Python's standard library.
 Repository: [DavJ/padiclab](https://github.com/DavJ/padiclab).
 The current Python distribution is `padic-tools`, imported as `padic_tools`.
 
+Install a published release with Python 3.10 or newer:
+
+```bash
+python -m pip install padic-tools
+# Optional symbolic expressions and complex evaluation:
+python -m pip install 'padic-tools[symbolic,complex]'
+```
+
+From a source checkout, including the documentation build tools:
+
 ```bash
 python -m pip install .
 # Optional symbolic expressions, complex evaluation and HTML documentation:
@@ -68,7 +78,7 @@ irreducibility modulo p. `[1, 0, 1]` defines Q3(i); it is rejected over Q5
 (split) and Q2 (ramified). `[1, 1, 1]` instead defines the unramified
 quadratic extension of Q2. Each element is a whole ideal ball with common
 coordinate precision, including negative valuations. `norm()` is algebraic;
-`absolute_value()` is the p-adic magnitude. See [the extension chapter](docs/extensions.rst)
+`absolute_value()` is the p-adic magnitude. See [the extension chapter](https://github.com/DavJ/padiclab/blob/master/docs/extensions.rst)
 for error bounds, exact residues and scope. Elementary analytic functions
 and dedicated field adapters are included; higher degrees remain future work.
 
@@ -96,7 +106,7 @@ Coordinates use the basis `(1, pi)`. Odd and negative uniformizer precisions
 give staggered base-coordinate precisions. Norm and trace return Qp balls
 in base p units, with bounds that account for the different, including wild
 dyadic ramification. `absolute_value_squared()` gives the exact rational
-square of the base-compatible magnitude. See [the ramified chapter](docs/ramified.rst)
+square of the base-compatible magnitude. See [the ramified chapter](https://github.com/DavJ/padiclab/blob/master/docs/ramified.rst)
 for the derivation and explicit Gaussian source conversion.
 
 ## Chosen Gaussian and quaternion local places
@@ -119,7 +129,7 @@ assert q.to_clifford().map_coefficients(C, place).is_congruent(local_q.to_cliffo
 
 The same API selects Qp at split primes and an unramified quadratic field
 at primes congruent to 3 modulo 4. `root_sign` explicitly chooses the
-generator image. See [chosen local places](docs/local_bridges.rst) for
+generator image. See [chosen local places](https://github.com/DavJ/padiclab/blob/master/docs/local_bridges.rst) for
 guard digits, conjugations, algebraic norms and the Clifford commuting square.
 The field images support the elementary functions described below.
 
@@ -143,7 +153,7 @@ Domains use `v_pi(pi)=1`, `v_pi(p)=e`: exp/sin/cos require
 excluding zero. Logarithm defaults to `log(p)=0`; choose at most one of
 `p_branch` and `pi_branch`. Finite branch uncertainty and all later
 denominator spikes are included in the output ball. See
-[quadratic analysis](docs/extension_analytic.rst) for the full proof and
+[quadratic analysis](https://github.com/DavJ/padiclab/blob/master/docs/extension_analytic.rst) for the full proof and
 precision contracts. Extension sqrt/Teichmueller lifts and theta/zeta
 evaluation in extension fields remain future work.
 
@@ -163,7 +173,7 @@ The series retains bounds for every omitted coefficient. Derivatives and
 primitives transform those bounds, including all later p-power denominator
 spikes. Exact coefficients remain exact; finite balls preserve their
 uncertainty. A custom prefix needs an explicit coefficient-tail premise.
-See [local calculus](docs/calculus.rst) and run
+See [local calculus](https://github.com/DavJ/padiclab/blob/master/docs/calculus.rst) and run
 `python examples/local_calculus.py`. Local primitives, Haar integration and
 integration against p-adic measures have separate APIs and meanings.
 
@@ -181,7 +191,7 @@ assert inverse.compose(inner)(9, precision=21).contains(Fraction(-1, 89))
 
 Reciprocals certify a nonvanishing disc for every allowed denominator.
 Composition checks exact center alignment and the whole disc image, with
-a bound on all omitted output coefficients. See [analytic operations](docs/series_ops.rst)
+a bound on all omitted output coefficients. See [analytic operations](https://github.com/DavJ/padiclab/blob/master/docs/series_ops.rst)
 and run `python examples/analytic_operations.py`.
 
 ## Volkenborn integration
@@ -196,7 +206,7 @@ assert volkenborn_integral(x*x) == Fraction(1, 6)
 ```
 
 The integrator also accepts `AnalyticSeries` with explicit affine parameters
-and a proof-backed whole-tail bound. See [Volkenborn integration](docs/volkenborn.rst)
+and a proof-backed whole-tail bound. See [Volkenborn integration](https://github.com/DavJ/padiclab/blob/master/docs/volkenborn.rst)
 for domains, finite precision and the distinction from Haar integration.
 
 ## Local differential equations
@@ -214,7 +224,7 @@ assert y(9, precision=21).is_congruent(2 + exp(K(-9, absprec=45)), 21)
 This solves y'=-y+2, y(0)=3. Variable coefficients and uncertain inputs use
 the same API. The returned `AnalyticSeries` includes a sufficient convergence
 disc and a bound for every omitted solution coefficient. See
-[local linear ODEs](docs/ode.rst) for the proof and scope, and run
+[local linear ODEs](https://github.com/DavJ/padiclab/blob/master/docs/ode.rst) for the proof and scope, and run
 `python examples/linear_ode.py`.
 
 For coupled equations and fundamental matrices:
@@ -227,7 +237,7 @@ phi = solve_linear_system([[0, 1], [-1, 0]], Matrix.identity(exact, 2),
 assert phi(0, precision=60).contains([[1, 0], [0, 1]])
 ```
 
-See [linear differential systems](docs/ode_system.rst) for variable
+See [linear differential systems](https://github.com/DavJ/padiclab/blob/master/docs/ode_system.rst) for variable
 coefficients, forcing, the matrix majorant proof and examples.
 
 ## Matrices and certified linear systems
@@ -250,7 +260,7 @@ assert D.inverse().precisions == ((17, 14), (14, 11))
 Local matrices represent whole families of entry balls. Complete pivoting
 checks valuation lower bounds, preserves uncertain zero entries and reports
 insufficient precision explicitly. Exact sources can be reevaluated through
-the Gaussian local places. See [linear algebra](docs/linalg.rst) for the
+the Gaussian local places. See [linear algebra](https://github.com/DavJ/padiclab/blob/master/docs/linalg.rst) for the
 enclosure proof, condition normalization, scope and independent checks.
 Run `python examples/linear_systems.py` for a standalone example.
 
@@ -387,10 +397,10 @@ only its `index.html` loses the other pages and assets. Both editions provide
 a separate **English · Čeština** language navigation bar; the Czech guide
 is kept out of the English chapter menu.
 
-Start with [the Czech guide](docs/cesky.rst),
-[the numerical tutorial](docs/tutorial.rst),
-[the special-function definitions](docs/functions.rst), and
-[the complex/quaternion/Clifford bridge](docs/bridges.rst).
+Start with [the Czech guide](https://github.com/DavJ/padiclab/blob/master/docs/cesky.rst),
+[the numerical tutorial](https://github.com/DavJ/padiclab/blob/master/docs/tutorial.rst),
+[the special-function definitions](https://github.com/DavJ/padiclab/blob/master/docs/functions.rst), and
+[the complex/quaternion/Clifford bridge](https://github.com/DavJ/padiclab/blob/master/docs/bridges.rst).
 
 The 2022 `main.py` helpers remain as an installed-source compatibility demo.
 `padic()` now returns a ball; new code should import `padic_tools`.
